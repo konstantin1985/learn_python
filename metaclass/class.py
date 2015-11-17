@@ -36,8 +36,96 @@ class First1():
 a = First1()
 print repr(a.__dict__) #{'a': 'Osel'} - because the attribute of OBJECT (self.a) was made in class constructor
 print repr(First1.__dict__) #{'a': 'Kozel', '__module__': '__main__', '__doc__': None, '__init__': <function __init__ at 0xb736872c>}
+    
+class First2():
+    def SetVariable(self):
+        self.a = "Barashek"
+
+a = First2()
+print repr(a.__dict__) #{}
+a.SetVariable()
+print repr(a.__dict__) #{'a': 'Barashek'}
+
+print "-"*20 + "2" + "-"*20
+'''
+Class and instance methods
+'''
+
+def MethodKozel(self):
+    print "MethodKozel"
+
+class Second():
+    
+    def MyMethod(self):
+        print "Second::MyMethod"
         
+a = Second()
+print repr(a.__dict__) #{}
+a.MyMethod() #Second::MyMethod
+a.MyMethod = MethodKozel 
+print repr(a.__dict__) #{'MyMethod': <function MethodKozel at 0xb73549cc>}
+a.MyMethod(a) #"MethodKozel", doesn't work without "a" in brackets
+Second.MyMethod(a) #Second::MyMethod
+
+print "-"*20 + "3" + "-"*20
+'''
+Invoke methods through __getattribute__, bound/unbound methods
+https://docs.python.org/2/howto/descriptor.html
+'''
+
+class Third(object):
+    def __init__(self):
+        pass
+    def Kozel(self):
+        print "Third::Kozel"
+    
+print repr(Third.__dict__)
+'''
+dict_proxy({'__dict__': <attribute '__dict__' of 'Third' objects>, 
+            '__module__': '__main__', 
+            '__weakref__': <attribute '__weakref__' of 'Third' objects>, 
+            '__doc__': None, 
+            '__init__': <function __init__ at 0xb7344c34>})
+'''
+
+print repr(Third.Kozel.__dict__) #{}
+
+print repr(object.__dict__)
+'''
+dict_proxy({'__setattr__': <slot wrapper '__setattr__' of 'object' objects>, 
+            '__reduce_ex__': <method '__reduce_ex__' of 'object' objects>, 
+            '__new__': <built-in method __new__ of type object at 0xb771ad00>, 
+            '__reduce__': <method '__reduce__' of 'object' objects>, 
+            '__str__': <slot wrapper '__str__' of 'object' objects>, 
+            '__format__': <method '__format__' of 'object' objects>, 
+            '__getattribute__': <slot wrapper '__getattribute__' of 'object' objects>,  #it's here
+            '__class__': <attribute '__class__' of 'object' objects>, 
+            '__delattr__': <slot wrapper '__delattr__' of 'object' objects>, 
+            '__subclasshook__': <method '__subclasshook__' of 'object' objects>, 
+            '__repr__': <slot wrapper '__repr__' of 'object' objects>, 
+            '__hash__': <slot wrapper '__hash__' of 'object' objects>, 
+            '__sizeof__': <method '__sizeof__' of 'object' objects>, 
+            '__doc__': 'The most base type', 
+            '__init__': <slot wrapper '__init__' of 'object' objects>})
+'''
+
+a = Third()
+print Third.__dict__["Kozel"].__get__(a, type(a))  #<bound method Third.Kozel of <__main__.Third object at 0xb732ecac>>
+Third.__dict__["Kozel"].__get__(a, type(a))()      #Third::Kozel
+print Third.__dict__["Kozel"].__get__(None, Third) #<unbound method Third.Kozel>
+#Third.__dict__["Kozel"].__get__(None, Third)()    #error
+Third.__dict__["Kozel"].__get__(None, Third)(a)    #Third::Kozel
+
+print Third.__getattribute__(a, "Kozel") #<bound method Third.Kozel of <__main__.Third object at 0xb72dad4c>>
+print a.__getattribute__("Kozel") #<bound method Third.Kozel of <__main__.Third object at 0xb7315d2c>>
+
+class Third1(object):
+    def __getattribute__(self, name):
+        print "getting `{}`".format(str(name))
+        return object.__getattribute__(self, name)
+
+f = Third1()
+f.bamf = 10
+print f.bamf #"getting `bamf`"
 
 
-
-print "-"*20 + "1" + "-"*20
