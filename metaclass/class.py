@@ -107,7 +107,7 @@ dict_proxy({'__setattr__': <slot wrapper '__setattr__' of 'object' objects>,
             '__sizeof__': <method '__sizeof__' of 'object' objects>, 
             '__doc__': 'The most base type', 
             '__init__': <slot wrapper '__init__' of 'object' objects>})
-'''
+''' 
 
 a = Third()
 print Third.__dict__["Kozel"].__get__(a, type(a))  #<bound method Third.Kozel of <__main__.Third object at 0xb732ecac>>
@@ -120,12 +120,32 @@ print Third.__getattribute__(a, "Kozel") #<bound method Third.Kozel of <__main__
 print a.__getattribute__("Kozel") #<bound method Third.Kozel of <__main__.Third object at 0xb7315d2c>>
 
 class Third1(object):
+    
     def __getattribute__(self, name):
         print "getting `{}`".format(str(name))
         return object.__getattribute__(self, name)
 
+    def Kozel(self):
+        print "Third1::Kozel"
+
+    def getx(self): 
+        print 'getx'
+        return self.__x
+    
+    def setx(self, v): 
+        print 'setx'
+        self.__x = v
+    
+    def delx(self): 
+        print 'delx'
+        del self.__x
+        
+    x = property(getx, setx, delx, "I'm the x property")
+
 f = Third1()
 f.bamf = 10
-print f.bamf #"getting `bamf`"
+print f.bamf #"getting `bamf`" "10"
+f.Kozel() #getting `Kozel` Third1::Kozel
 
-
+f.x = "Oslik" #setx
+print f.x
