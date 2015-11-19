@@ -148,4 +148,11 @@ print f.bamf #"getting `bamf`" "10"
 f.Kozel() #getting `Kozel` Third1::Kozel
 
 f.x = "Oslik" #setx
-print f.x
+print f.x #getting `x`   getx    getting `_Third1__x`
+
+
+
+
+
+
+
