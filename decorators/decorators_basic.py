@@ -64,6 +64,7 @@ def call(*argv, **kwargs):
         return fn(*argv, **kwargs)
     return call_fn
 
+
 @call(5)
 def table(n):
     value = []
