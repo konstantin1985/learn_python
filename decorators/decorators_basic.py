@@ -54,10 +54,26 @@ def PrintOsel():
 
 PrintOsel()
 
-print "--------------4---------------------"
+print "-"*20 + "call decorator" + "-"*20
 
 
+def call(*argv, **kwargs):
+    print repr(argv)
+    print repr(kwargs)
+    def call_fn(fn):
+        return fn(*argv, **kwargs)
+    return call_fn
 
+@call(5)
+def table(n):
+    value = []
+    for i in range(n):
+        value.append(i*i)
+    return value
+
+
+#table = call(5)(table)
+print table
 
 
 
