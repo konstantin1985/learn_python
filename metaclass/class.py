@@ -195,6 +195,54 @@ print dict_from_class(A)
 print dict_from_class(B)
 
 
+print "-"*20 + "property_from_class" + "-"*20
+
+def property_from_class(cls):
+    return property(doc=cls.__doc__, **dict_from_class(cls))
+
+class B(object):
+    def __init__(self):
+        self._value = 0
+
+    @property_from_class
+    class value(object):
+        '''The value must be an integer.'''
+        def fget(self):
+            return self._value
+        def fset(self, value):
+            # Ensure that value to be stored is an int.
+            assert isinstance(value, int), repr(value)
+            self._value = value
+        
+b = B()
+print b.value
+b.value = 100
+print b.value
+print B.value.__doc__ # The value must be an integer.
+
+
+
+print "-"*20 + "type(name, bases, dict)" + "-"*20
+
+print type.__doc__
+'''
+type(object) -> the object's type
+type(name, bases, dict) -> a new type
+'''
+
+cls = type('A', (object,), {})
+print cls.__name__
+
+body = dict(__doc__='docstring', __name__='not_A', __module__='modname')
+cls2 = type('A', (object,), body)
+print cls2.__doc__, cls2.__name__, cls2.__module__
+a = cls2()
+print repr(a) + '---' + repr(type(a))
+
+
+
+
+
 
 
 
