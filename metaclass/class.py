@@ -150,6 +150,55 @@ f.Kozel() #getting `Kozel` Third1::Kozel
 f.x = "Oslik" #setx
 print f.x #getting `x`   getx    getting `_Third1__x`
 
+print "-"*20 + "Parts of an empty class" + "-"*20
+'''
+http://jfine-python-classes.readthedocs.org/en/latest/construct.html#the-empty-class
+'''
+
+class A(object):
+    '''
+    Kozel class
+    '''
+    pass
+
+print A.__dict__
+print sorted(A.__dict__.keys())
+print A.__bases__
+print A.__mro__
+print A.__doc__
+
+print "-"*20 + "dict_from_class(), exclude standard keys" + "-"*20
+'''
+http://jfine-python-classes.readthedocs.org/en/latest/construct.html#the-empty-class
+http://www.python-course.eu/sets_frozensets.php
+'''
+
+class A(object):
+    pass
+
+_excluded_keys = set(A.__dict__.keys())
+print _excluded_keys
+print type(_excluded_keys)
+
+def dict_from_class(cls):
+    return dict((key, value) for (key, value) in cls.__dict__.items()
+                             if key not in _excluded_keys)
+
+class B(object):
+    
+    s = "a string"
+    
+    def Method(self):
+        pass
+
+print dict_from_class(A)
+print dict_from_class(B)
+
+
+
+
+
+
 
 
 
