@@ -1,4 +1,4 @@
-#http://jfine-python-classes.readthedocs.org/en/latest/property_from_class.html#about-properties
+#http://jfine-python-class.readthedocs.org/en/latest/property_from_class.html#about-properties
 #http://stackoverflow.com/questions/15458613/python-why-is-read-only-property-writable
 
 

@@ -1,5 +1,5 @@
 
-#http://jfine-python-classes.readthedocs.org/en/latest/construct.html
+#http://jfine-python-class.readthedocs.org/en/latest/construct.html
 #http://stackoverflow.com/questions/22609272/python-typename-bases-dict
 print "First----------------------------------------------------"
 
