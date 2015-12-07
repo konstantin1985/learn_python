@@ -226,7 +226,6 @@ class spam:
         print(self.method.__doc__)
 
 print func.__doc__
-
 c = spam()
 print c.__doc__
 c.method()
