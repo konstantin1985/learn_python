@@ -209,6 +209,185 @@ for x in S:
 
 print "-"*20 + "#7 Coding Alternative: __iter__ plus yield" + "-"*20
 
+'''
+Because generator functions automati-
+cally save local variable state and create required iterator methods, they fit this role
+well, and complement the state retention and other utility we get from classes.
+'''
+
+def gen(x):
+    for i in range(x): yield i ** 2
+
+G = gen(5)
+print G.__iter__() == G     #True
+I = iter(G)
+print next(I), next(I)      #0 1
+list(gen(5))                #[0, 1, 4, 9, 16]
+
+class Squares2:
+    
+    def __init__(self, start, stop):
+        self.start = start
+        self.stop = stop
+        
+    def __iter__(self):
+        for value in range(self.start, self.stop + 1):
+            yield value ** 2
+
+for i in Squares2(0, 4):
+    print(i),              #0 1 4 9 16
+
+'''
+Running our class instance through iter obtains the result of calling
+__iter__ as usual, but in this case the result is a generator object with an automatically
+created __next__ of the same sort we always get when calling a generator function that
+contains a yield. The only difference here is that the generator function is automatically
+called on.
+'''
+
+S = Squares2(1, 5)
+print S                   #<__main__.Squares2 instance at 0xb73012ec>
+
+I = iter(S) 
+print(I)                  #<generator object __iter__ at 0xb72724dc>
+
+print next(I)             #1
+print next(I)             #4
+print next(I)
+print next(I)
+print next(I)
+try:
+    next(I)
+except StopIteration:
+    print "StopIteration"
+
+
+'''
+It may also help to notice that we could name the generator method something other
+than __iter__ and call manually to iterate-Squares(1,5).gen(), for example.
+'''
+
+class Squares3():
+    
+    def __init__(self, start, stop):
+        self.start = start
+        self.stop = stop
+
+    def gen(self):
+        for value in range(self.start, self.stop + 1):
+            yield value ** 2
+            
+S = Squares3(1, 5)
+I = iter(S.gen())
+print next(I)             #1
+print next(I)             #4
+print next(I)             #9
+
+print "-"*20 + "#8 Multiple iterators with yield" + "-"*20
+
+'''
+Besides its code conciseness, the user-defined class iterable of the prior section based
+upon the __iter__/yield combination has an important added bonus-it also supports
+multiple active iterators automatically. This naturally follows from the fact that each
+call to __iter__ is a call to a generator function, which returns a new generator with its
+own copy of the local scope for state retention:
+'''
+
+class Squares4:
+    
+    def __init__(self, start, stop):
+        self.start = start
+        self.stop = stop
+        
+    def __iter__(self):
+        for value in range(self.start, self.stop + 1):
+            yield value ** 2
+
+S = Squares4(1, 5)
+I = iter(S)
+print next(I), next(I)   #1, 4
+J = iter(S)
+print next(J)            #1
+print next(I)            #9
+
+'''
+Although generator functions are single-scan iterables, the implicit calls to __iter__ in
+iteration contexts make new generators supporting new independent scans:
+'''
+
+S = Squares4(1, 4)
+for i in S:                       #each for call __iter__
+    for j in S:
+        print('%s:%s' % (i, j)),  #1:1 1:4 1:9 1:16 4:1 4:4 4:9 4:16 9:1 9:4 9:9 9:16 16:1 16:4 16:9 16:16
+print
+
+class Squares5:
+    
+    def __init__(self, start, stop):
+        self.start = start
+        self.stop = stop
+        
+    def __iter__(self):
+        return Squares5Iterator(self.start, self.stop)   
+
+class Squares5Iterator:
+    
+    def __init__(self, start, stop):
+        self.current = start - 1
+        self.stop = stop
+        
+    def next(self):
+        self.current += 1
+        if self.current > self.stop:
+            raise StopIteration
+        return self.current * 2
+
+for i in Squares5(1, 5):
+    print('%s' % i), #2 4 6 8 10
+
+
+print "-"*20 + "#9 Membership: __contains__, __iter__, and __getitem__" + "-"*20
+
+class Iters:
+    
+    def __init__(self, value):
+        self.data = value
+    
+    def __getitem__(self, i):
+        print('get[%s]' % i)
+        return self.data[i]
+    
+    def __iter__(self):
+        print('iter=>')
+        self.ix = 0
+        return self
+    
+    def __next__(self):
+        print('next:')
+        if self.ix == len(self.data): raise StopIteration
+        item = self.data[self.ix]
+        self.ix += 1
+        return item
+
+    def __contains__(self, x):
+        print('contains:')
+        return x in self.data
+    next = __next__
+    
+    
+X = Iters([1, 2, 3, 4, 5])
+print(3 in X)
+    
+    
+    
+    
+    
+    
+
+
+
+
+
 
 
 
