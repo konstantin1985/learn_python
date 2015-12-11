@@ -344,47 +344,109 @@ class Squares5Iterator:
 
 for i in Squares5(1, 5):
     print('%s' % i), #2 4 6 8 10
+print
 
+print "-"*20 + "#9 Attribute Access: __getattr__ and __setattr__" + "-"*20
 
-print "-"*20 + "#9 Membership: __contains__, __iter__, and __getitem__" + "-"*20
+'''
+In effect, age becomes a dynamically computed attribute-its value is
+formed by running code, not fetching an object.
+'''
 
-class Iters:
+class Empty:
     
-    def __init__(self, value):
+    a = 555
+    
+    def __getattr__(self, attrname):
+        if attrname == 'age':
+            return 40
+        else:
+            raise AttributeError(attrname)
+        
+X = Empty()
+print X.age   #40
+print X.a     #555, __getattr__ isn't invoked
+
+try:
+    print X.name
+except AttributeError, e:
+    print('Error:', e)
+print 'finish'
+
+print "-"*20 + "#10 Attribute Assignment and Deletion" + "-"*20
+
+'''
+In the same department, the __setattr__ intercepts all attribute assignments. If this
+method is defined or inherited, self.attr = value becomes self.__setattr__('attr',
+value). Like __getattr__, this allows your class to catch attribute changes, and validate
+or transform as desired.
+'''
+
+'''
+This method is a bit trickier to use, though, because assigning to any self attributes
+within __setattr__ calls __setattr__ again, potentially causing an infinite recursion
+loop (and a fairly quick stack overflow exception!).
+Remember, this catches all attribute assignments.
+'''
+
+class AccessControl:
+    
+    def __setattr__(self, attr, value):
+        print "__setattr__ is invoked"
+        if attr == 'age':
+            self.__dict__[attr] = value + 10
+            #self.age = value + 10 #error: recursion
+        else:
+            raise AttributeError(attr + ' not allowed')
+
+X = AccessControl()
+X.age = 40
+print X.age                 #50
+try:
+    X.name = "Bob"
+except AttributeError, e:
+    print('Error:', e)      #('Error:', AttributeError('name not allowed',))
+
+'''
+If you change the __dict__ assignment in this to either of the following, it triggers the
+infinite recursion loop and exception-both dot notation and its setattr built-in func-
+tion equivalent (the assignment analog of getattr) fail when age is assigned outside the
+class:
+self.age = value + 10               # Loops
+setattr(self, attr, value + 10)     # Loops (attr is 'age')
+'''
+
+'''
+The __getattribute__ method intercepts all attribute fetches, not just those that
+are undefined, but when using it you must be more cautious than with __get
+attr__ to avoid loops.
+
+The property built-in function allows us to associate methods with fetch and set
+operations on a specific class attribute.
+'''
+'''
+Python programmers are able to write large OOP frameworks and applications without private
+declarations-an interesting finding about access controls in general that is beyond the
+scope of our purposes here.
+'''
+
+
+print "-"*20 + "#10 String Representation: __repr__ and __str__" + "-"*20
+
+class adder:
+    
+    def __init__(self, value = 0):
         self.data = value
     
-    def __getitem__(self, i):
-        print('get[%s]' % i)
-        return self.data[i]
-    
-    def __iter__(self):
-        print('iter=>')
-        self.ix = 0
-        return self
-    
-    def __next__(self):
-        print('next:')
-        if self.ix == len(self.data): raise StopIteration
-        item = self.data[self.ix]
-        self.ix += 1
-        return item
+    def __add__(self, other):
+        print "__add__"
+        self.data += other
 
-    def __contains__(self, x):
-        print('contains:')
-        return x in self.data
-    next = __next__
-    
-    
-X = Iters([1, 2, 3, 4, 5])
-print(3 in X)
-    
-    
-    
-    
-    
-    
-
-
+x = adder()
+y = adder()
+print x.data
+x = x + y
+print x.data
 
 
 
