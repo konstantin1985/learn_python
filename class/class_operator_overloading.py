@@ -1,4 +1,3 @@
-from django.conf.locale import sk
 
 
 print "-"*20 + "#1 Indexing and Slicing: __getitem__ and __setitem__" + "-"*20
@@ -441,19 +440,354 @@ class adder:
     def __add__(self, other):
         print "__add__"
         self.data += other
+        return adder(self.data + other)
+
+    def __repr__(self):
+        return "addrepr(%s)" % self.data
 
 x = adder()
-y = adder()
 print x.data
-x = x + y
+x = x + 5
 print x.data
+print(x)
+print str(x), repr(x)
+
+
+class addstr(adder):
+    
+    def __str__(self):
+        return '[Value: %s]' % self.data
+        
+x = addstr(3)
+x + 1
+print(x)         #[Value: 4]
+print str(x)     #[Value: 4]
+print repr(x)    #addrerp(4)
+
+class addboth(adder):
+
+    def __str__(self):
+        return '[Value: %s]' % self.data
+    
+    def __repr__(self):
+        return 'addboth(%s)' % self.data
+
+x = addboth(4)
+x + 1
+print(x)         
+print str(x)      
+print repr(x)     
+
+class Printer:
+    
+    def __init__(self, val):
+        self.val = val
+    
+    def __str__(self):
+        return str(self.val)
+    
+objs = [Printer(2), Printer(3)]
+
+'''
+Second, depending on a container's string-conversion logic, the user-friendly display
+of __str__ might only apply when objects appear at the top level of a print operation;
+objects nested in larger objects might still print with their __repr__ or its default.
+'''
+
+for x in objs:
+    print(x)    #2 3
+        
+print(objs)     #[<__main__.Printer instance at 0x887f60c>, <__main__.Printer instance at 0x887f62c>]        
+
+'''
+To ensure that a custom display is run in all contexts regardless of the container, code
+__repr__ , not __str__ ; the former is run in all cases if the latter doesn't apply, including
+nested appearances:
+'''
+
+class PrinterRepr:
+    
+    def __init__(self, val):
+        self.val = val
+    
+    def __repr__(self):
+        return str(self.val)
+    
+objs = [PrinterRepr(2), PrinterRepr(3)]
+for x in objs:
+    print(x)    #2 3
+
+print(objs)     #[2, 3]
+
+
+print "-"*20 + "#11 Right-Side and In-Place Uses: __radd__ and __iadd__" + "-"*20
+
+class Commuter1:
+    
+    def __init__(self, val):
+        self.val = val
+    
+    def __add__(self, other):
+        print('add', self.val, other)
+        return self.val + other
+    
+    def __radd__(self, other):
+        print('radd', self.val, other)
+        return other + self.val
+
+x = Commuter1(88)
+y = Commuter1(99)
+
+print(x + 1) #('add', 88, 1) 89
+print(1 + y) #('radd', 99, 1) 100
+print(x + y)
+#('add', 88, <__main__.Commuter1 instance at 0x86c31ac>)
+#('radd', 99, 88)
+#187
+
+class Commuter2:
+    
+    def __init__(self, val):
+        self.val = val
+    
+    def __add__(self, other):
+        print('add', self.val, other)
+        return self.val + other
+    
+    def __radd__(self, other):
+        return self.__add__(other)
+    
+class Commuter3:
+    
+    def __init__(self, val):
+        self.val = val
+    
+    def __add__(self, other):
+        print('add', self.val, other)
+        return self.val + other
+    
+    def __radd__(self, other):
+        return self + other
+        
+        
+class Commuter4:
+    
+    def __init__(self, val):
+        self.val = val
+    
+    def __add__(self, other):
+        print('add', self.val, other)
+        return self.val + other
+    
+    __radd__ = __add__   
+
+
+x = Commuter2(88)
+y = Commuter2(99)
+
+print(x + 1) #89
+print(1 + y) #100
+print(x + y) #187
+
+x = Commuter3(88)
+y = Commuter3(99)
+
+print(x + 1) #89
+print(1 + y) #100
+print(x + y) #187
+
+x = Commuter4(88)
+y = Commuter4(99)
+
+print(x + 1) #89
+print(1 + y) #100
+print(x + y) #187
+
+
+print "-"*20 + "#12 Propagating class type" + "-"*20
+
+class Commuter5:
+    
+    def __init__(self, val):
+        self.val = val
+    
+    def __add__(self, other):
+        if isinstance(other, Commuter5):
+            other = other.val
+        return Commuter5(self.val + other)
+
+    def __radd__(self, other):
+        return Commuter5(other + self.val)
+    
+    def __str__(self):
+        return '<Commuter5: %s>' % self.val
+    
+x = Commuter5(88)
+y = Commuter5(99)
+print(x + 10)  #<Commuter5: 98>
+print(10 + y)  #<Commuter5: 109>
+
+z = x + y
+print(z)         #<Commuter5: 187>
+print(z + 10)    #<Commuter5: 197>
+print(z + z)     #<Commuter5: 374>
+print(z + z + 1) #<Commuter5: 375>
+
+'''
+The __iadd__ method, though, allows for more efficient in-place changes to
+be coded where applicable:
+'''
+
+class Number:
+    
+    def __init__(self, val):
+        self.val = val
+    
+    def __iadd__(self, other):
+        self.val += other
+        return self
+
+x = Number(5)
+x += 1
+x += 1
+print x.val   #7
+
+y = Number([1])
+y += [2]
+y += [3]
+print y.val   #[1, 2, 3]
+
+print "-"*20 + "#13 Call Expressions: __call__" + "-"*20
+
+class Prod:
+    
+    def __init__(self, value):
+        self.value = value
+    
+    def __call__(self, other):
+        return self.value * other
+    
+x = Prod(2)
+print x(3) #6
+print x(4) #8
+
+print "-"*20 + "#13 Function Interfaces and Callback-Based Code" + "-"*20
+
+class Callback:
+    
+    def __init__(self, color):
+        self.color = color
+        
+    def __call__(self):
+        print('turn', self.color)
+   
+cb1 = Callback('blue')
+cb2 = Callback('green')
+
+cb1()  #('turn', 'blue')
+cb2()  #('turn', 'green')
+
+#Another alternative to make a callback
+
+def callback(color):
+    def oncall():
+        print('turn')
+    return oncall
+
+cb3 = callback('yellow')
+cb3()   #turn
+
+'''
+Before we move on, there are two other ways that Python programmers sometimes tie
+information to a callback function like this. One option is to use default arguments in
+lambda functions:
+'''
+
+cb4 = (lambda color = 'red' : 'turn ' + color)
+print(cb4())  #turn red
+
+'''
+The other is to use bound methods of a class- a bit of a preview, but simple enough to
+introduce here. A bound method object is a kind of object that remembers both the
+self instance and the referenced function. This object may therefore be called later as
+a simple function without an instance:
+'''
+
+class Callback:
+    
+    def __init__(self, color):
+        self.color = color
+        
+    def changeColor(self):
+        print('turn', self.color)
+        
+cb1 = Callback('blue')
+cb2 = Callback('yellow')
+
+cb1actual = cb1.changeColor
+cb2actual = cb2.changeColor
+
+cb1actual()   #('turn', 'blue')
+cb2actual()   #('turn', 'yellow')
+
+print "-"*20 + "#14 Comparisons: __lt__, __gt__, and Others" + "-"*20
+
+class C:
+    data = 'spam'
+    def __gt__(self, other):
+        return self.data > other
+    def __lt__(self, other):
+        return self.data < other
+    
+X = C()
+print(X > 'ham')  # True (runs __gt__)
+print(X < 'ham')  # False (runs __lt__)
+
+print "-"*20 + "#15 Boolean Tests: __bool__ and __len__" + "-"*20
+
+'''
+As mentioned briefly earlier, in Boolean contexts, Python first tries __bool__ to obtain
+a direct Boolean value; if that method is missing, Python tries __len__ to infer a truth
+value from the object's length.
+'''
+
+#Python 3
+
+class Truth1:
+    def __bool__(self): return True
+    
+X = Truth1()
+if X: 
+    print('yes!')  #'yes!'
+
+class Truth2:
+    def __bool__(self): 
+        print 'Here'
+        return False
+    
+Y = Truth2()
+print bool(Y) #False
+
+'''
+The short story here: in 2.X, use __nonzero__ for Boolean values, or return 0 from the
+__len__ fallback method to designate false:
+'''
+        
+class Life:
+    def __init__(self, name='unknown'):
+        print('Hello ' + name)
+        self.name = name
+
+    def live(self):
+        print(self.name)
+
+    def __del__(self):
+        print('Goodbye ' + self.name)
+        
+r1 = Life('r1')  #Hello r1
+r1.live()        #r1
+r1 = 'r2'        #Goodbye r1
 
 
 
-
-
-
-
-
-
-
+    
