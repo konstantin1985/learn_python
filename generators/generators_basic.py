@@ -1,5 +1,3 @@
-from audioop import reverse
-
 
 print "-"*20 + "#1 List Comprehensions Versus map" + "-"*20
 
@@ -203,6 +201,118 @@ Chapter 4 and has popped up in passing ever since. We'll firm up this term when 
 explore iterables in Chapter 14 and Chapter 20.
 '''
 
+'''
+To generalize a generator expression for an arbitrary subject, wrap it in a simple
+function that takes an argument and returns a generator that uses it
+'''
+
+s = 'spam'
+F = lambda seq: (seq[i:] + seq[:i] for i in range(len(seq)))
+
+print F(s)                      #<generator object <genexpr> at 0xb73603c4>
+print list(F(s))                #['spam', 'pams', 'amsp', 'mspa']
+print list(F([1, 2, 3]))        #[[1, 2, 3], [2, 3, 1], [3, 1, 2]]
+
+print "-"*20 + "#6 Example: Emulating zip and map with Iteration Tools" + "-"*20
+
+S1 = 'abc'
+S2 = 'xyz123'
+print zip(S1, S2)       #[('a', 'x'), ('b', 'y'), ('c', 'z')]
+
+
+#map passes paired items to function, truncates
+print map(pow, [0, 1, 2, 3], [2, 2, 2, 2])    #[0, 1, 4, 9]
+
+'''
+In function definition * is pack to tuple
+In function invocation * is unpack arguments from tuple 
+'''
+
+def mymap(func, *seqs):
+    res = []
+    print 'seqs: ', seqs         # seqs = ([0, 1, 2, 3], [2, 2, 2, 2])
+    for x in zip(*seqs):         #*seqs = [0, 1, 2, 3], [2, 2, 2, 2]
+        res.append(func(*x))     #x = (0, 2)....(3, 2)
+    return res
+
+print mymap(abs, [-2, -1, 0, 1, 2])             #[2, 1, 0, 1, 2]
+print mymap(pow, [0, 1, 2, 3], [2, 2, 2, 2])    #[0, 1, 4, 9] 
+
+def myzip(*seqs):
+    print seqs                            #('abc', 'xyz123')
+    seqs = [list(S) for S in seqs]        
+    print seqs                            #[['a', 'b', 'c'], ['x', 'y', 'z', '1', '2', '3']]
+    res = []
+    while all(seqs): #no list in list is empty - so myzip() truncates
+        print 'seqs here: ', seqs
+        #seqs here:  [['a', 'b', 'c'], ['x', 'y', 'z', '1', '2', '3']]
+        #seqs here:  [['b', 'c'], ['y', 'z', '1', '2', '3']]
+        #seqs here:  [['c'], ['z', '1', '2', '3']]
+        #http://stackoverflow.com/questions/11520492/difference-between-del-remove-and-pop-on-lists
+        res.append(tuple(S.pop(0) for S in seqs))
+    return res
+
+S1, S2 = 'abc', 'xyz123'
+print(myzip(S1, S2))          #[('a', 'x'), ('b', 'y'), ('c', 'z')]
+
+'''
+Use del to remove an element by index, pop() to remove it by index if you need the returned value, and remove() to delete an element by value. 
+The latter requires searching the list, and raises ValueError if no such value occurs in the list.
+'''
+
+a = ['a', 'b', 'b', 'c', 'd']
+#remove first occurence
+b= a.remove('b')      #['a', 'b', 'c', 'd']
+print a               #None
+print b
+#b= a.remove(2)       #ValueError: list.remove(x): x not in list
+
+a = ['a', 'b', 'b', 'c', 'd']
+b = a.pop(0)
+print a               #['b', 'b', 'c', 'd']
+print b               #a
+
+a = ['a', 'b', 'b', 'c', 'd']
+del a[3]
+print a               #['a', 'b', 'b', 'd']
+
+
+print "-"*20 + "#7 set and dict comprehensions" + "-"*20
+
+print {x * x for x in range(10)}       #set([0, 1, 4, 81, 64, 9, 16, 49, 25, 36])
+print {x: x * x for x in range(10)}    #{0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
+
+
+print "-"*20 + "#8 Scopes and Comprehension Variables" + "-"*20
+
+'''
+Python 2.X is the same in this regard, except that list comprehension variables are not
+localized-they work just like for loops and keep their last iteration values, but are also
+open to unexpected clashes with outside names. Generator, set, and dictionary forms
+localize names as in 3.X:
+'''
+
+x = 99
+[x for x in range(5)]
+print x  #4 in python 2, 99 in python 3
+
+x = 99
+for x in range(5): pass
+print x  #4
+
+x = 99
+(x for x in range(5))
+print x  #99
+
+print "-"*20 + "#9 Comprehending Set and Dictionary Comprehensions" + "-"*20
+
+print {xx * xx for xx in range(10)}             #set([0, 1, 4, 81, 64, 9, 16, 49, 25, 36])
+print set(xx * xx for xx in range(10))          #set([0, 1, 4, 81, 64, 9, 16, 49, 25, 36])
+
+print {xx: xx * xx for xx in range(10)}         #{0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
+print dict((xx, xx * xx) for xx in range(10))   #{0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
+
+#print xx #NameError: name 'xx' is not defined
 
 
 
