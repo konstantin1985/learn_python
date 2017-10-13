@@ -172,7 +172,6 @@ y = {'h', 'a', 'm'}
 print x,y           # set(['a', 'p', 's', 'm']) set(['a', 'h', 'm'])
 print x & y         # set(['a', 'm'])
 print x | y         # set(['a', 'p', 's', 'h', 'm'])
-print 
 
 
 
