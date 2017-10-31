@@ -6,7 +6,7 @@
 <path>/${PROJECT_DIR_NAME}/exceptions</path>
 <path>/${PROJECT_DIR_NAME}/linux</path>
 <path>/${PROJECT_DIR_NAME}/importing</path>
-<path>/${PROJECT_DIR_NAME}/types</path>
+<path>/${PROJECT_DIR_NAME}/types_python</path>
 <path>/${PROJECT_DIR_NAME}/rest</path>
 <path>/${PROJECT_DIR_NAME}/book1</path>
 <path>/${PROJECT_DIR_NAME}/pipes</path>

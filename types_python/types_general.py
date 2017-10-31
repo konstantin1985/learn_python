@@ -163,20 +163,23 @@ L = [4, 5, 6]
 x = L * 3        # like [4, 5, 6] + [4, 5, 6] + [4, 5, 6]
 print(x)         # [4, 5, 6, 4, 5, 6, 4, 5, 6]
 
+L = [4, 5, 6]
 y = [L] * 3      # like [L] + [L] + [L]
 print(y)         # [[4, 5, 6], [4, 5, 6], [4, 5, 6]]
 
 L[1] = 0
-print(x)         # [4, 5, 6, 4, 5, 6, 4, 5, 6] - no reference to the original list
+print(x)         # [4, 5, 6, 4, 5, 6, 4, 5, 6] - no reference to the ORIGINAL list
 print(y)         # [[4, 0, 6], [4, 0, 6], [4, 0, 6]]
 
 # Even more subtly, although Y doesn't share an object with L anymore, it still embeds
-# four references to the same copy of it.
+# three references to the same copy of it.
 L = [1, 2, 3]
 Y = [list(L)] * 3
-print(Y)
+print(Y)             # [[1, 2, 3], [1, 2, 3], [1, 2, 3]]
+L[1] = 0
+print(Y)             # [[1, 2, 3], [1, 2, 3], [1, 2, 3]] - no reference to the original list because we copied it with list()
 Y[0][1] = 99
-print(Y)         # [[1, 99, 3], [1, 99, 3], [1, 99, 3]]
+print(Y)             # [[1, 99, 3], [1, 99, 3], [1, 99, 3]] - there are 3 references to the same copy
 
 # Repetition, concatenation and slicing copy only the top level of
 # their operand objects
