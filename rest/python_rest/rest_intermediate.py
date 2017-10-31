@@ -41,7 +41,7 @@ class TaskListAPI(Resource):
                                    help = "No task title proveded", location = ['values', 'json'])
         self.reqparse.add_argument('description', type = str, default = "", location = ['values', 'json'])
         
-        # Correct way to invoike super in python 2.x
+        # Correct way to invoke super in python 2.x
         super(TaskListAPI, self).__init__()
     
     def get(self):
