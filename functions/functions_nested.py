@@ -20,7 +20,7 @@ def func1():
     A = 88
     def func2():
         print(A)
-    func2()    
+    func2()
 func1()    # print 88, from enclosing def
 # func2()  # NameError: name 'func2' is not defined
 
@@ -263,6 +263,48 @@ F('ham')    # ham 44
 
 # As shown earlier, when you are using nonlocal and nested function closures instead of
 # global, each call to tester remembers its own unique copy of the state object.
+
+
+# How global works with nested function scopes
+
+print("-" * 10)
+
+def tester():
+    testVar = 11
+    def nested():
+        testVar = 55
+        print(testVar)    # 55
+    nested()
+    print(testVar)        # 11
+tester()
+
+print("-" * 10)
+
+def tester():
+    testVar = 11
+    def nested():
+        global testVar  
+        # print(testVar)  # NameError: global name 'testVar' is not defined
+        testVar = 55
+        print(testVar)    # 55 
+    nested()
+    print(testVar)        # 11
+tester()
+
+print("-" * 10)
+
+testVar = 7
+def tester():
+    testVar = 11
+    def nested():
+        global testVar
+        print(testVar)    # 7
+        testVar = 55
+        print(testVar)    # 55 
+    nested()
+    print(testVar)        # 11
+tester()
+print(testVar)            # 55
 
 print('-' * 10 + "A.9. State retention options: classes, explicit attributes" + '-' * 10)
 
