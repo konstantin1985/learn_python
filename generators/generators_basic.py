@@ -1,137 +1,176 @@
 
-print "-"*20 + "#1 List Comprehensions Versus map" + "-"*20
+print("-" * 20 + "#1 Generator Functions and Generator Expressions" + "-" * 20)
 
-res = []
-for x in 'spam':
-    res.append(ord(x))
-print res                   #[115, 112, 97, 109]
+# Generator functions (available since 2.3) are coded as normal def statements, but
+# use yield statements to return results one at a time, suspending and resuming their
+# state between each.
 
-res = map(ord, 'spam')
-print res                   #[115, 112, 97, 109]
+# Generator expressions (available since 2.4) are similar to the list comprehensions
+# of the prior section, but they return an object that produces results on demand
+# instead of building a result list.
 
-res = [ord(x) for x in 'spam']
-print res                   #[115, 112, 97, 109]
-
-print filter(lambda x: x % 2 == 0, range(5)) #[0, 2, 4]
-
-print [x + y for x in [0, 1, 2] for y in [100, 200, 300]]   #[100, 200, 300, 101, 201, 301, 102, 202, 302]
+# Because neither constructs a result list all at once, they save memory space and allow
+# computation time to be split across result requests. 
 
 
-M = [[1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9]]
+print("-" * 20 + "#2 Generator Functions: yield Versus return" + "-" * 20)
 
-print [col + 10 for row in M for col in row]   #[11, 12, 13, 14, 15, 16, 17, 18, 19]
+# Generator functions are like normal functions in most respects, and in fact are coded
+# with normal def statements. However, when created, they are compiled specially into
+# an object that supports the iteration protocol. And when called, they don't return a
+# result: they return a result generator that can appear in any iteration context.
 
-print [[col + 10 for col in row] for row in M] #[[11, 12, 13], [14, 15, 16], [17, 18, 19]]
+# Python for loops, and all other iteration contexts, use this iteration protocol to step
+# through a sequence or value generator, if the protocol is supported (if not, iteration
+# falls back on repeatedly indexing sequences instead). Any object that supports this
+# interface works in all iteration tools.
 
-'''
-However, in this case, there is currently a substantial performance advantage to the
-extra complexity: based on tests run under Python today, map calls can be twice as fast
-as equivalent for loops, and list comprehensions are often faster than map calls. This
-speed difference can vary per usage pattern and Python, but is generally due to the fact
-that map and list comprehensions run at C language speed inside the interpreter, which
-is often much faster than stepping through Python for loop bytecode within the PVM.
-'''
+# To support this protocol, functions containing a yield statement are compiled specially
+# as generators - they are not normal functions, but rather are built to return an object
+# with the expected iteration protocol methods. When later called, they return a 
+# generator object that supports the iteration interface with an automatically created 
+# method named __next__ to start or resume execution.
 
-listoftuple = [('bob', 35, 'mgr'), ('sue', 40, 'dev')]
-print [age for (name, age, job) in listoftuple]
-print list(map((lambda row: row[1]), listoftuple))
+# An iterable object's iterator is fetched initially with the iter built-in function,
+# though this step is a no-op for objects that are their own iterator.
 
+# The chief code difference between generator and normal functions is that a generator
+# yields a value, rather than returning one-the yield statement suspends the function
+# and sends a value back to the caller, but retains enough state to enable the function to
+# resume from where it left off. When resumed, the function continues execution 
+# immediately after the last yield run. From the function's perspective, this allows its code
+# to produce a series of values over time, rather than computing them all at once and
+# sending them back in something like a list.
 
-print "-"*20 + "#2 Generator Functions: yield Versus return" + "-"*20
+# Generator functions may also have a return statement that, along with falling off the
+# end of the def block, simply terminates the generation of values - technically, by raising
+# a StopIteration exception after any normal function exit actions. From the caller's
+# perspective, the generator's __next__ method resumes the function and runs until either
+# the next yield result is returned or a StopIteration is raised.
 
-'''
-The chief code difference between generator and normal functions is that a generator
-yields a value, rather than returning one-the yield statement suspends the function
-and sends a value back to the caller, but retains enough state to enable the function to
-resume from where it left off. When resumed, the function continues execution im-
-mediately after the last yield run. From the function's perspective, this allows its code
-to produce a series of values over time, rather than computing them all at once and
-sending them back in something like a list.
-'''
+# The net effect is that generator functions, coded as def statements containing yield
+# statements, are automatically made to support the iteration object protocol and thus
+# may be used in any iteration context to produce results over time and on demand.
 
 def gensquares(N):
     for i in range(N):
         yield i ** 2
 
-'''
-Notice that the top-level iter call of the iteration protocol isn't required here because
-generators are their own iterator, supporting just one active iteration scan. To put that
-another way generators return themselves for iter , because they support next directly.
-This also holds true in the generator expressions
-'''
+# To end the generation of values, functions either use a return statement with no value
+# or simply allow control to fall off the end of the function body.
+
+for i in gensquares(5):
+    print(i, ":"),    # (0, ':') (1, ':') (4, ':') (9, ':') (16, ':')
+print()   
+
+# Notice that the top-level iter call of the iteration protocol isn't required here because
+# generators are their own iterator, supporting just one active iteration scan. To put that
+# another way generators return themselves for iter, because they support next directly.
+# This also holds true in the generator expressions
 
 y = gensquares(5)
-print(iter(y) is y)   #True
-print(next(y))        #0
+print(iter(y) is y)   # True
+print(next(y))        # 0
+print(next(y))        # 1
+print(next(y))        # 4
+print(next(y))        # 9
+print(next(y))        # 16
+# print(next(y))      # StopIteration
 
 def ups(line):
     for sub in line.split(','):
         yield sub.upper()
 
-print {i: s for (i, s) in enumerate(ups('aaa,bbb,ccc'))}   #{0: 'AAA', 1: 'BBB', 2: 'CCC'}
+# All iteration contexts would work
+print tuple(ups('aaa,bbb,ccc'))                            # ('AAA', 'BBB', 'CCC')
+print {i: s for (i, s) in enumerate(ups('aaa,bbb,ccc'))}   # {0: 'AAA', 1: 'BBB', 2: 'CCC'}
+
+print("-" * 20 + "#3 Generator Functions: send Versus next" + "-" * 20)
+
+# When this extra protocol is used, values are sent into a generator G by calling
+# G.send(value). The generator's code is then resumed, and the yield expression in the
+# generator returns the value passed to send. If the regular G.__next__() method (or its
+# next(G) equivalent) is called to advance, the yield simply returns None.
 
 def gen():
     for i in range(10):
-        X = yield i
-        print(X)
+        X = yield i  # (*) 
+        print(X)     # (**)
         
 G = gen()
-print next(G)      #0
-print G.send(77)   #77 1
-print G.send(88)   #88 2
-print next(G)      #None 3
+rv = next(G)       # Nothing is printed, because gen() did "yield 0" and (**) wasn't reached yet 
+print rv           # 0  - result of yield 0
+rv = G.send(77)    # 77 - X in (*) equals to 77 we print it (**) and go to the next iteration
+print rv           # 1  - yield 1
+rv = G.send(88)    # 88
+print rv           # 2
+rv = next(G)       # None - if we don't pass any value with send, then X is None 
+print rv           # 3
 
-print "-"*20 + "#3 Generator Expressions: Iterables Meet Comprehensions" + "-"*20
+# There are also throw and close methods!
 
-'''
-In fact, at least on a functionality basis, coding a list comprehension is essentially the
-same as wrapping a generator expression in a list built-in call to force it to produce
-all its results in a list at once:
-'''
+print("-" * 20 + "#4 Generator Expressions: Iterables Meet Comprehensions" + "-" * 20)
+
+
+# In fact, at least on a functionality basis, coding a list comprehension is essentially the
+# same as wrapping a generator expression in a list built-in call to force it to produce
+# all its results in a list at once:
 
 print list(x ** 2 for x in range(4))   #[0, 1, 4, 9]
 
-'''
-Operationally, however, generator expressions are very different: instead of building
-the result list in memory, they return a generator object-an automatically created
-iterable. This iterable object in turn supports the iteration protocol to yield one piece
-of the result list at a time in any iteration context. The iterable object also retains gen-
-erator state while active-the variable x in the preceding expressions, along with the
-generator's code location.
-'''
+# Operationally, however, generator expressions are very different from ListCom: instead of 
+# building the result list in memory, they return a generator object-an automatically created
+# iterable. This iterable object in turn supports the iteration protocol to yield one piece
+# of the result list at a time in any iteration context. The iterable object also retains 
+# generator state while active-the variable x in the preceding expressions, along with the
+# generator's code location.
 
 G = (x ** 2 for x in range(4))
-print iter(G) is G   #True
-print next(G) #0
-print next(G) #1
-print next(G) #4
-print next(G) #9
+print iter(G) is G   # True, __iter__ returns itself
+print next(G)        # 0
+print next(G)        # 1
+print next(G)        # 4
+print next(G)        # 9
 #print next(G) #StopIteration
 
+# We don't typically see the next iterator machinery under the hood of a generator
+# expression like this because for loops trigger it for us automatically
 for num in (x ** 2 for x in range(4)):
-    print("%s, %s" % (num, num/2.0)) #important to divide by 2.0
+    print("%s, %s" % (num, num / 2.0))  # important to divide by 2.0
 
-'''
-Syntactically, parentheses are not required around a generator expression
-that is the sole item already enclosed in parentheses used for other purposes-like those
-of a function call.
-'''
+# 0, 0.0
+# 1, 0.5
+# 4, 2.0
+# 9, 4.5
 
-print ''.join(x.upper() for x in "aaa,bbb,ccc".split(',')) #AAABBBCCC
+# Syntactically, parentheses are not required around a generator expression
+# that is the sole item already enclosed in parentheses used for other purposes-like those
+# of a function call.
 
-print sorted((x ** 2 for x in range(4)), reverse = True)   #[9, 4, 1, 0]
-             
-    
-print "-"*20 + "#4 Generators Are Single-Iteration Objects" + "-"*20
+print ''.join(x.upper() for x in "aaa,bbb,ccc".split(',')) # AAABBBCCC
+print sorted(x ** 2 for x in range(4))                     # parentheses are optional
+print sorted((x ** 2 for x in range(4)), reverse = True)   # [9, 4, 1, 0], here parentheses are required
 
-'''
-A subtle but important point: both generator functions and generator expressions are
-their own iterators and thus support just one active iteration-unlike some built-in
-types, you can't have multiple iterators of either positioned at different locations in the
-set of results.
-'''
+# On the other hand, generator expressions may also run slightly slower than list 
+# comprehensions in practice, so they are probably best used only for very large result sets,
+# or applications that cannot wait for full results generation.
+
+
+print("-" * 20 + "#5 Generator Expressions: versus map" + "-" * 20)
+
+
+
+
+
+
+
+
+print("-" * 20 + "#4 Generators Are Single-Iteration Objects" + "-" * 20)
+
+# A subtle but important point: both generator functions and generator expressions are
+# their own iterators and thus support just one active iteration-unlike some built-in
+# types, you can't have multiple iterators of either positioned at different locations in the
+# set of results.
 
 G = (c * 4 for c in "SPAM")
 

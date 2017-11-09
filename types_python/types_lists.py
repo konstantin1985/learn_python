@@ -24,6 +24,15 @@ print(L)                                 # [2, 3, 4, 1, 5, 6, 7]
 L.extend([8, 9, 10])
 print(L)                                 # [2, 3, 4, 1, 5, 6, 7, 8, 9, 10]
 
+L = [1, 2, 3]
+L[1:] = [4, 5, 6]
+print(L)                                 # [1, 4, 5, 6]
+
+L = [1, 2, 3]
+L[1:1] = [4, 5, 6]
+print(L)                                 # [1, 4, 5, 6, 2, 3]
+
+
 # Methods are functions (really, object attributes that reference functions) 
 # that are associated with and act upon particular objects. Methods provide type-specific tools
 L = ['eat', 'more', 'SPAM!']
