@@ -9,14 +9,12 @@
 import unittest
 from collections import namedtuple
 
-Rec = namedtuple('Rec123', ['name', 'age', 'jobs'])
-
 
 def FindClosestSimple(items):
     
     dictionary = {}
     
-    # Word = namedtuple('Word', ['last', "min_d"])
+    Word = namedtuple('Word', ['last', "min_d"])
     
     # [0] - last occurrence
     # [1] - current minimal distance
@@ -24,14 +22,31 @@ def FindClosestSimple(items):
     for i, item in enumerate(items):
         
         if item in dictionary:
-            m = min(i - dictionary[item][0], dictionary[item][1])            
-            dictionary[item] = (i, m)
+            m = min(i - dictionary[item].last, dictionary[item].min_d)            
+            dictionary[item] = Word(i, m)
         else:
-            dictionary[item] = (i, float("Inf"))
+            dictionary[item] = Word(i, float("Inf"))
     
+    # DEBUG:
+    # for k in dictionary:
+    #     print(k, ":", dictionary[k])
+    
+    # Find minimum length
+    min_d = float("Inf")
     for k in dictionary:
-        print(k, ":", dictionary[k])
+        if dictionary[k].min_d < min_d:
+            min_d = dictionary[k].min_d
+
+    # Create a list of words with min_d distance
+    # So we can handle the case when several words have the same
+    # minimal distance
+    rv = []
+    # sorted() so the rv will have the same key order for unit tests
+    for k in sorted(dictionary):
+        if dictionary[k].min_d == min_d:
+            rv.append(k)
     
+    return min_d, rv
 
 
 class Ex12_03Test(unittest.TestCase):
@@ -40,9 +55,12 @@ class Ex12_03Test(unittest.TestCase):
         s = ["All", "work", "and", "no", "play", "makes", 
              "for", "no", "work", "no", "fun", "and", 
              "no", "results"]
-        FindClosestSimple(s)
-        pass
-    
+        self.assertEqual(FindClosestSimple(s), (2, ["no"]))
+        
+        # What I don't like in the test is that 
+        s = ["all", "yes", "all", "yes"]
+        self.assertEqual(FindClosestSimple(s), (2, ["all", "yes"]))
+
 
 if __name__ == "__main__":
     unittest.main()

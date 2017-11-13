@@ -33,14 +33,15 @@ print(a, b, c, d) # ('s', 'p', 'a', 'm')
 # Accept any type of sequence (iterable) on the right as long as it is of the same
 # length as the sequence on the left.
 [a, b, c] = (1, 2, 3)
-print(a, c)  # (1, 3)
+print(a, c)                         # (1, 3)
 (a, b, c) = "ABC"
-print(a, c)  # ('A', 'C')
+print(a, c)                         # ('A', 'C')
 
 # We can use slicing
 s = "SPAM"
-a, b, c = list(s[:2]) + [s[2:]]
-print(a, b, c)    # ('S', 'P', 'AM')
+a, b, c = list(s[:2]) + [s[2:]]     # ['S', 'P'] + ['AM']
+print(list(s[:2]) + [s[2:]])        # ['S', 'P', 'AM']
+print(a, b, c)                      # ('S', 'P', 'AM')
 
 # Python pairs the first string on the right ('SP') with the first tuple on the left ((a, b))
 # and assigns one character at a time, before assigning the entire second string ('AM') to

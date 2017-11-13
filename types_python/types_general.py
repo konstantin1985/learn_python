@@ -1,3 +1,15 @@
+# Expressions vs statements
+# https://stackoverflow.com/questions/4728073/what-is-the-difference-between-an-expression-and-a-statement-in-python 
+
+# Expressions only contain identifiers, literals and operators, 
+# where operators include arithmetic and boolean operators, the 
+# function call operator () the subscription operator [] and similar, 
+# and can be reduced to some kind of "value", which can be any Python object. 
+
+# Statements (see 1, 2), on the other hand, are everything that can make up
+# a line (or several lines) of Python code. Note that expressions are statements
+# as well.
+
 # Assignments always store references to objects, not copies
 # of those objects. In practice, this is usually what you want. Because assignments can
 # generate multiple references to the same object, though, it's important to be aware that

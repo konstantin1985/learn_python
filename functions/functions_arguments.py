@@ -199,7 +199,6 @@ def f210(**args): print(args)
 f210()                # {}
 f210(a=1, b='2')      # {'a': 1, 'b': '2'}
 
-# 
 # 1 is passed to a by position, 2 and 3 into pargs positional tuple, 
 # and x and y wind up in the kargs keyword dictionary
 def f220(a, *pargs, **kargs): print(a, pargs, kargs)
@@ -207,12 +206,17 @@ f220(1, 2, 3, x=1, y=2)  # (1, (2, 3), {'y': 2, 'x': 1})
 
 print('-' * 10 + "A.7. Arguments matching: unpacking arguments" + '-' * 10)
 
+# In function definition * is pack to tuple
+# In function invocation * is unpack arguments from tuple
+
 # Unpacking meaning is the inverse of its meaning in the function definition-it
 # unpacks a collection of arguments, rather than building a collection of arguments. 
 # For example, we can pass four arguments to a function in a tuple and let Python unpack
 # them into individual arguments
 
-def f300(a, b, c, d): print(a, b, c, d)
+def f300(a, b, c, d): 
+    print(a, b, c, d)
+
 args = (1, 2)
 args += (3, 4)
 f300(*args)      # (1, 2, 3, 4)
