@@ -4,6 +4,9 @@ import os
 # Do this exercise
 # https://stackoverflow.com/questions/47217475/print-1-to-n-digits-count
 
+# Generator vs iterator
+# http://nvie.com/posts/iterators-vs-generators/
+
 print("-" * 20 + "#1 Generator Functions and Generator Expressions" + "-" * 20)
 
 # Generator functions (available since 2.3) are coded as normal def statements, but

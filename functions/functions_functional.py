@@ -87,7 +87,7 @@ from functools import reduce  # was moved here in Python 3.X (only required in P
 # initializes the starting value.
 
 rv = reduce((lambda x, y: x + y), [1, 2, 3, 4])
-print(rv)  # 10, 1+2=3, 3+3=6, 6+4=10 
+print(rv)  # 10, 1+2=3, 3+3=6, 6+4=10
 
 rv = reduce((lambda x, y: x * y), [1, 2, 3, 4])
 print(rv)  # 24, 1*2=2, 2*3=6, 6*4=24

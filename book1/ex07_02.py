@@ -57,7 +57,7 @@ def FloydAlgorithm(lst):
             return None  # There is no cycle, so return None
         tortoise = tortoise.GetNext()
         
-        if hare == tortoise:
+        if hare is tortoise:
             break        # Loop found
      
     # 2. If Cyclic - find the start of the cycle
@@ -67,7 +67,7 @@ def FloydAlgorithm(lst):
     # Cell where they met is the beginning of the loop
     
     hare = first
-    while (hare != tortoise):
+    while (hare is not tortoise):
         hare = hare.GetNext()
         tortoise = tortoise.GetNext()
     

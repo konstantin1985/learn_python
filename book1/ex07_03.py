@@ -37,7 +37,7 @@ def FindMedian(lst):
     # Count number of elements in the loop and
     # find the cell with the minimum value
     count = 1    
-    while first != current:
+    while first is not current:
         # Important to have it before the "current.GetNext()"
         # because "current = lst.GetNext()" already
         if minCell.GetValue() > current.GetValue():
@@ -56,7 +56,6 @@ def FindMedian(lst):
     
     # Return median value
     return current
-    
 
 class Ex07_03Test(unittest.TestCase):
     
