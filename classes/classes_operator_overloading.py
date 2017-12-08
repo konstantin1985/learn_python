@@ -1,5 +1,10 @@
 
 
+# Specially named methods such as __init__, __add__, and __str__ are inherited by
+# subclasses and instances, just like any other names assigned in a class. 
+# If they re not coded in a class, Python looks for such names in all its 
+# superclasses, as usual.
+
 print "-"*20 + "#1 Indexing and Slicing: __getitem__ and __setitem__" + "-"*20
 
 class Indexer:
@@ -430,7 +435,20 @@ scope of our purposes here.
 '''
 
 
-print "-"*20 + "#10 String Representation: __repr__ and __str__" + "-"*20
+print("-" * 20 + "#10 String Representation: __repr__ and __str__" + "-" * 20)
+
+# Excellent explanation of __repr__ vs __str__
+# https://stackoverflow.com/questions/1436703/difference-between-str-and-repr-in-python
+# The default implementation is useless
+# __repr__ goal is to be unambiguous
+# __str__ goal is to be readable
+# Container's __str__ uses contained objects' __repr__
+# if __repr__ is defined, and __str__ is not, the object will behave as though __str__=__repr__
+
+# Summary:
+# Implement __repr__ for any class you implement. This should be second nature.
+# Implement __str__ if you think it would be useful to have a string version which
+# errs on the side of more readability in favor of more ambiguity.
 
 class adder:
     
@@ -440,18 +458,19 @@ class adder:
     def __add__(self, other):
         print "__add__"
         self.data += other
-        return adder(self.data + other)
+        return adder(self.data + other)      # self.data = 5, other = 5
 
     def __repr__(self):
         return "addrepr(%s)" % self.data
 
 x = adder()
-print x.data
-x = x + 5
-print x.data
-print(x)
-print str(x), repr(x)
+print(x.data)                                # 0
+x = x + 5                                    # __add__             
+print(x.data)                                # 10
+print(x)                                     # addrepr(10)
+print(str(x), repr(x))                       # addrepr(10) addrepr(10)
 
+print('-' * 10)
 
 class addstr(adder):
     
@@ -460,9 +479,11 @@ class addstr(adder):
         
 x = addstr(3)
 x + 1
-print(x)         #[Value: 4]
-print str(x)     #[Value: 4]
-print repr(x)    #addrerp(4)
+print(x)                                     # [Value: 4]
+print(str(x))                                # [Value: 4]
+print(repr(x))                               # addrerp(4)
+
+print('-' * 10)
 
 class addboth(adder):
 
@@ -474,9 +495,22 @@ class addboth(adder):
 
 x = addboth(4)
 x + 1
-print(x)         
-print str(x)      
-print repr(x)     
+print(x)                                     # [Value: 5]
+print(str(x))                                # [Value: 5]
+print(repr(x))                               # addboth(5)
+
+l = [addboth(3), addboth(5)]      
+print(l)                                     # [addboth(3), addboth(5)] Container's __str__ uses contained objects' __repr__
+
+print('-' * 10)
+
+print('%.2f' % 100500.199)                   # 100500.20
+print('%08d' % 100500)                       # 00100500
+print('%010f' % 100500)                      # 100500.000000 - because 10 leading '0' is for the whole number (and even - sign and even .)!
+print('%f' % 100500)                         # 100500.000000
+print('%010.2f' % 100500)                    # 0100500.00    - because 10 leading '0' is for the whole number (and even - sign and even .)!
+
+print('-' * 10)
 
 class Printer:
     

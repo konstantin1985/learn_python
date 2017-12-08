@@ -1,0 +1,3 @@
+
+
+print("Home directory string")

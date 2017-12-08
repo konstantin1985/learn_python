@@ -28,7 +28,6 @@
 # modules are installed on your machine. Because these are always searched, they
 # normally do not need to be added to your PYTHONPATH or included in path files
 
-
 # 4. The contents of any .pth files (if present)
 
 # Next, a lesser-used feature of Python allows users to add directories to the module
@@ -51,6 +50,8 @@
 
 # Because their install directory is always part of the module search path, clients
 # can import the modules of such extensions without any path settings.
+
+# /usr/local/lib/python3.6/site-packages
 
 import sys
 

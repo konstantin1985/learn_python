@@ -1,4 +1,78 @@
-print "-"*20 + "#1 Class attributes" + "-"*20
+
+print "-"*20 + "#0 Class trees" + "-"*20
+
+# - Each class statement generates a new class object.
+# - Each time a class is called, it generates a new instance object.
+# - Instances are automatically linked to the classes from which they are created.
+#   Classes are automatically linked to their superclasses according to the way we list
+#   them in parentheses in a class header line; the left-to-right order there gives the
+#   order in the tree.
+
+# class C2: ...             # Make class objects (ovals)
+# class C3: ...
+# class C1(C2, C3): ...     # Linked to superclasses (in this order)
+# I1 = C1()                 # Make instance objects
+# I2 = C1()                 # Linked to their classes
+
+# In Python, if there is more than one superclass listed in parentheses in 
+# a class statement (like C1's here), their left-to-right order gives the 
+# order in which those superclasses will be searched for attributes by inheritance.
+
+# The __init__ method is known as the constructor because of when it is run. It's most 
+# commonly used representative of a larger class of methods called operator overloading 
+# methods, which we'll discuss in more detail in the chapters that follow. Such
+# methods are inherited in class trees as usual and have double underscores at the start
+# and end of their names to make them distinct. Python runs them automatically when
+# instances that support them appear in the corresponding operations, and they mostly an 
+# alternative to using simple method calls. They're also optional: if omitted,
+# the operations are not supported. If no __init__ is present, class calls return an empty
+# instance, without initializing it.
+
+# For example, to implement set intersection, a class might either provide a method
+# named intersect, or overload the & expression operator to dispatch to the required
+# logic by coding a method named __and__.
+
+# IMPORTANT
+# ! By and large, though, OOP is about looking up attributes in trees with a special first 
+# ! argument in functions (self)
+# !!! An inheritance search looks for an attribute first in the instance object, then in the
+# !!! class the instance was created from, then in all higher superclasses, progressing
+# !!! from the bottom to the top of the object tree, and from left to right (by default).
+# ! The search stops at the first place the attribute is found. Because the lowest version
+# ! of a name found along the way wins, class hierarchies naturally support customization 
+# ! by extension in new subclasses.
+# ! Both class and instance objects are namespaces (packages of variables that appear
+# ! as attributes). The main difference between them is that classes are a kind of factory
+# ! for creating multiple instances.
+# ! The first argument in a class's method function is special because it always receives
+# ! the instance object that is the implied subject of the method call. It's usually called
+# ! self by convention.
+
+# company = [bob, sue, tom]     # A composite object
+# for emp in company:
+# print(emp.computeSalary())    # # Run this object's version: default or custom
+
+# Polymorphism means that the meaning of an operation depends on the object being operated on.
+# That is, code shouldn't care about what an object is, only about what it does. Here, the method
+# computeSalary is located by inheritance search in each object before it is called. The net 
+# effect is that we automatically run the correct version for the object being processed. 
+
+# OOP is mostly about an argument named self, and a search for attributes in trees of linked
+# objects called inheritance. Objects at the bottom of the tree inherit attributes from objects
+# higher up in the tree - a feature that enables us to program by customizing code
+
+# At a base level, they are mostly just namespaces, much like the modules. 
+# Unlike modules, though, classes also have support for generating multiple objects, 
+# for namespace inheritance, and for operator overloading. 
+
+# Assignments to attributes of self in methods make per-instance attributes.
+# Inside a class's method functions, the first argument (called self by convention)
+# references the instance object being processed; assignments to attributes of self
+# create or change data in the instance, not the class.
+
+
+
+print("-" * 20 + "#1 Class attributes" + "-" * 20)
 
 '''
 Assignments to instance attributes create or change the names in the instance, rather
@@ -30,14 +104,12 @@ class MixedNames:
 mn = MixedNames("kozel")
 mn.display()
 
-print "-"*20 + "#2 Class methods" + "-"*20
+print("-" * 20 + "#2 Class methods" + "-" * 20)
 
-'''
-C++ programmers may recognize Python's self argument as being similar to C++'s
-this pointer. In Python, though, self is always explicit in your code: methods must
-always go through self to fetch or change attributes of the instance being processed
-by the current method call.
-'''
+# C++ programmers may recognize Python's self argument as being similar to C++'s
+# this pointer. In Python, though, self is always explicit in your code: methods must
+# always go through self to fetch or change attributes of the instance being processed
+# by the current method call.
 
 class NextClass:
     def printer(self, value):
