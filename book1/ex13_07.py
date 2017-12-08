@@ -22,6 +22,8 @@ def IsPhotoPossible(teamA, teamB):
     teamA.sort()
     teamB.sort()
     
+    # Another way would be to check whether teamA or teamB has max height
+    # and then 'return' for False could be made inside the loop
     temp = 0
     for (a, b) in zip(teamA,teamB):
         if a > b: temp += 1
