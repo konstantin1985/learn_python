@@ -110,6 +110,11 @@ print(x.message)                                                     # class cal
 #         Super.__init__(self, x)                                    # Run superclass __init__
 #         ...custom code...                                          # Do my init actions
 
+# VERY IMPORTANT:
+# Python itself automatically runs just one constructor-the lowest one in
+# the tree. Superclass constructors are usually called through the class name,
+# passing in the self instance manually: Superclass.__init__(self, ...).
+
 print("-" * 20 + "#3 Inheritance" + "-" * 20)
 
 # Every time you use an expression of the form object.attr where object is an instance or class object,
@@ -340,5 +345,124 @@ print(X)                                                             # 22
 
 print("-" * 20 + "#7 Nested classes" + "-" * 20)
 
+
+# Most importantly, the lookup rules for simple names like X never search enclosing
+# class statements-just defs, modules, and built-ins
+
+X = 1
+def nester():
+    X = 2                                                            # Hides global
+    print(X)                                                         # Local: 2
+    class C:
+        X = 3                                                        # Class local hides nester's: C.X or I.X (not scoped)
+        print(X)                                                     # Local: 3
+        def method1(self):
+            print(X)                                                 # enclosing def (not 3 in class!): 2  (MOST IMPORTANT!)
+            print(self.X)                                            # Inherited class local: 3
+        def method2(self):
+            X = 4                                                    # Hides enclosing (nester, not class)
+            print(X)                                                 # Local: 4
+            self.X = 5                                               # Hides class
+            print(self.X)                                            # Located in instance: 5
+
+    I = C()                                                          # 1 2 3 
+    print("---1---")
+    I.method1()                                                      # 2 3
+    print("---2---")
+    I.method2()                                                      # 4 5
+    
+print(X)
+nester()
+
+print("-" * 20 + "#8 Namespace Dictionaries: Review" + "-" * 20)
+
+# Module namespaces have a concrete implementation as dictionaries, exposed with the 
+# built-in __dict__ attribute. The same holds true for class and instance objects-attribute
+# qualification is mostly a dictionary indexing operation internally, and attribute 
+# inheritance is largely a matter of searching linked dictionaries. In fact, within Python, 
+# instance and class objects are mostly just dictionaries with links between them.
+
+# The inheritance tree is explicitly available in special attributes, which
+# you can inspect. Instances have a __class__ attribute that links to their class, and classes
+# have a __bases__ attribute that is a tuple containing links to higher superclasses.
+
+class Super:
+    def hello(self):
+        self.data1 = 'spam'
+        
+class Sub(Super):
+    def hola(self):
+        self.data2 = 'eggs'
+        
+X = Sub() 
+print(Sub.__dict__)                                                  # Class namespace dictionary
+print(X.__dict__)                                                    # Instance namespace dict
+print(X.__class__)                                                   # __main__.Sub: Class of instance
+# print(X.__bases__)                                                 # AttributeError: Sub instance has no attribute '__bases__'
+print(Sub.__bases__)                                                 # (<class __main__.Super at 0xb738d74c>,): Superclasses of class
+print(Super.__bases__)                                               # ()
+
+# As classes assign to self attributes, they populate the instance objects-that is, 
+# attributes wind up in the instances' attribute namespace dictionaries, not in the classes'.
+
+X.hello()
+print(X.__dict__)                                                    # {'data1': 'spam'}
+
+X.hola()
+print(X.__dict__)                                                    # {'data1': 'spam', 'data2': 'eggs'}
+
+print(list(Sub.__dict__.keys()))                                     # ['__module__', '__doc__', 'hola']
+print(list(Super.__dict__.keys()))                                   # ['__module__', 'hello', '__doc__']
+        
+# Because attributes are actually dictionary keys inside Python, there are really two ways
+# to fetch and assign their values - by qualification, or by key indexing
+
+print(X.data1, X.__dict__['data1'])                                  # ('spam', 'spam')
+X.data3 = 'toast'
+print(X.__dict__)                                                    # {'data1': 'spam', 'data3': 'toast', 'data2': 'eggs'}
+X.__dict__['data3'] = 'ham'
+print(X.data3)                                                       # ham
+
+# VERY IMPORTANT:
+# This equivalence applies only to attributes actually attached to the instance, though.
+# Because attribute fetch qualification also performs an inheritance search, it can access
+# inherited attributes that namespace dictionary indexing cannot. The inherited attribute
+# X.hello, for instance, cannot be accessed by X.__dict__['hello'].
+
+print("-" * 20 + "#9 Documentation Strings Revisited" + "-" * 20)
+
+# All of these can be triple-quoted blocks or simpler one-liner literals like those here
+
+# The main advantage of documentation strings is that they stick around at runtime
+
+
+# Suppose this is the file docstr.py
+
+"I am: docstr.__doc__"
+
+def func(args):
+    "I am: docstr.func.__doc__"
+    pass
+
+class spam:
+    "I am: spam.__doc or docstr.spam.__doc__ or self.__doc__"
+    def method(self):
+        "I am: spam.method.__doc__ or self.method.__doc__"
+        print(self.__doc__)
+        print(self.method.__doc__)
+
+
+print(func.__doc__)                                                # I am: docstr.func.__doc__
+print(spam.__doc__)                                                # I am: spam.__doc or docstr.spam.__doc__ or self.__doc__
+print(spam.method.__doc__)                                         # I am: spam.method.__doc__ or self.method.__doc__
+
+x = spam()
+x.method()
+# I am: spam.__doc or docstr.spam.__doc__ or self.__doc__
+# I am: spam.method.__doc__ or self.method.__doc__
+
+# Python "best practice" rule of thumb is to use docstrings for functional 
+# documentation (what your objects do) and hash-mark comments for more 
+# micro-level documentation (how arcane bits of code work)
 
 

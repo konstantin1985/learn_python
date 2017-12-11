@@ -5,7 +5,44 @@
 # If they re not coded in a class, Python looks for such names in all its 
 # superclasses, as usual.
 
-print "-"*20 + "#1 Indexing and Slicing: __getitem__ and __setitem__" + "-"*20
+# Operator overloading methods are also all optional-if you
+# don't code or inherit one, that operation is simply unsupported by your class, and
+# attempting it will raise an exception. Some built-in operations, like printing, 
+# have defaults 
+
+# Although expressions trigger operator methods, be careful not to 
+# assume that there is a speed advantage to cutting out the middleman and
+# calling the operator method directly. In fact, calling the operator method
+# directly might be twice as slow, presumably because of the overhead of
+# a function call, which Python avoids or optimizes in built-in cases.
+# x = L.__len__() is  twice slower than x = len(L)
+
+print("-" * 20 + "#0 Constructors and Expressions: __init__ and __sub__" + "-" * 20)
+
+# Technically, instance creation first triggers the __new__ method, which
+# creates and returns the new instance object, which is then passed into
+# __init__ for initialization. Since __new__ has a built-in implementation
+# and is redefined in only very limited roles, though, nearly all Python
+# classes initialize by defining an __init__ method.
+
+class Number:
+    def __init__(self, start):
+        self.data = start
+    def __sub__(self, other):
+        return Number(self.data - other)
+
+X = Number(5)
+Y = X - 2
+print(Y.data)                                                        # 3
+
+# To make __sub__ works for integers and Number it seems that the typecheck is required
+# if isinstance(other, int):
+
+print("-" * 20 + "#1 Indexing and Slicing: __getitem__ and __setitem__" + "-" * 20)
+
+# When an instance X appears in and indexing expression like X[i], Python calls the 
+# __getitem__ method inherited by the instance, passing X to the first argument and 
+# the index in brackets to the second argument
 
 class Indexer:
     def __getitem__(self, index):
