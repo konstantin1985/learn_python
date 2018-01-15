@@ -1,4 +1,8 @@
 
+# USEFUL LINKS:
+# https://stackoverflow.com/questions/6535832/python-inherit-the-superclass-init
+
+# GENERAL INFORMATION:
 
 # Inheritance is best at coding extensions based on direct customization (like our
 # Manager specialization of Person). Composition is well suited to scenarios where
@@ -7,8 +11,8 @@
 
 print("-" * 20 + "#1 Attributes of class and instance" + "-" * 20)
 
-# The basic inheritance model that classes produce is very simple
-# - all it really involves is searching for attributes in trees of linked objects.
+# The basic inheritance model that classes produce is very simple. All 
+# it really involves is searching for attributes in trees of linked objects.
 
 class rec: pass
 
@@ -16,40 +20,42 @@ class rec: pass
 rec.name = "Bob"
 rec.age = 40
 
-# Class is just an object with field names attached to it.
-# Notice that this works even though there are no instances of the class yet; classes are
+# Class is just an object with field names attached to it. Notice that this
+# works even though there are no instances of the class yet; classes are
 # objects in their own right, even without instances.
-# In fact, they are just self-contained namespaces; as long as we have a reference 
-# to a class, we can set or change its attributes anytime we wish. 
-print(rec.name)                                           # Bob
 
-# These instances begin their lives as completely empty namespace objects. Because they
-# remember the class from which they were made, though, they will obtain the attributes
-# we attached to the class by inheritance
+# In fact, they are just self-contained namespaces; as long as we have a
+# reference to a class, we can set or change its attributes any time we wish. 
+
+print(rec.name)                                                     # Bob                    
+
+# Class instances (onjects) begin their lives as completely empty namespace
+# objects. Because they remember the class from which they were made, though, 
+# they will obtain the attributes we attached to the class by inheritance.
 
 x = rec()
 y = rec()
-print(x.name, y.name)                                     # ('Bob', 'Bob')
+print(x.name, y.name)                                               # ('Bob', 'Bob')
 
 # Crucially, attribute references kick off inheritance searches, but attribute 
 # assignments affect only the objects in which the assignments are made.
 
 x.name = "Sue"
-print(rec.name, x.name, y.name)                           # ('Bob', 'Sue', 'Bob')
+print(rec.name, x.name, y.name)                                     # ('Bob', 'Sue', 'Bob')
 
-# Here, the class's namespace dictionary shows the name and age attributes we assigned
-# to it, x has its own name, and y is still empty.
+# Here, the class's namespace dictionary shows the name and age attributes 
+# we assigned to it, x has its own name, and y is still empty.
 
-print(list(rec.__dict__.keys()))                          # ['age', '__module__', '__doc__', 'name']
-print(list(x.__dict__.keys()))                            # ['name']
-print(list(y.__dict__.keys()))                            # []
+print(list(rec.__dict__.keys()))                                    # ['age', '__module__', '__doc__', 'name']
+print(list(x.__dict__.keys()))                                      # ['name']
+print(list(y.__dict__.keys()))                                      # []
 
-# Attribute notation kicks off inheritance search, but indexing looks 
-# in the single object only
+# Attribute notation kicks off inheritance search, but indexing __dict__['xxx']
+# looks in the single object only
 
-print(x.name, x.__dict__['name'])                         # ('Sue', 'Sue')
-print(x.age)                                              # 40
-# print(x.__dict__["age"])                                # KeyError: 'age'
+print(x.name, x.__dict__['name'])                                   # ('Sue', 'Sue')
+print(x.age)                                                        # 40
+# print(x.__dict__["age"])                                          # KeyError: 'age'
 
 # To facilitate inheritance search on attribute fetches, each instance has a link 
 # to its class
@@ -111,25 +117,37 @@ class Person:
     def giveRaise(self): pass
     def __repr__(self): return 'p'
 
-class Manager(Person):                             # Inherit
-    def giveRaise(self, a): pass                   # Customize
-    def someThingElse(self, b): pass               # Extend
+class Manager(Person):                                              # Inherit
+    def giveRaise(self, a): pass                                    # Customize
+    def someThingElse(self, b): pass                                # Extend
 
 tom = Manager()
-tom.lastName()                                     # Inherited verbatim
-tom.giveRaise(1)                                   # Customized version
-tom.someThingElse(2)                               # Extension here
-print(tom)                                         # Inherited overload method
+tom.lastName()                                                      # Inherited verbatim
+tom.giveRaise(1)                                                    # Customized version
+tom.someThingElse(2)                                                # Extension here
+print(tom)                                                          # Inherited overload method
 
 print("-" * 20 + "#4 Inheritance and constructors" + "-" * 20)
 
-# Calling superclass constructors from redefinitions this way turns out to be a very common 
-# coding pattern in Python. By itself, Python uses inheritance to look for and call
-# only one __init__ method at construction time-the lowest one in the class tree. If you
-# need higher __init__ methods to be run at construction time (and you usually do), you
-# must call them manually, and usually through the superclass's name. The upside to
-# this is that you can be explicit about which argument to pass up to the superclass's
-# constructor and can choose to not call it at all: not calling the superclass constructor
+# If you don't override the constructor, the constructor of the
+# superclass is invoked.
+
+class Base:
+    def __init__(self):
+        print("Base constructor")
+
+class Sub(Base): pass
+
+s = Sub()                                                           # Base constructor
+
+# If you override the constructor in the subclass, you need to
+# call the constructor in superclass explicitly. By itself, Python
+# uses inheritance to look for and call only one __init__ method 
+# at construction time-the lowest one in the class tree.
+
+# The upside to this is that you can be explicit about which 
+# argument to pass up to the superclass's constructor and can 
+# choose to not call it at all: not calling the superclass constructor
 # allows you to replace its logic altogether, rather than augmenting it.
 
 class Person:
@@ -142,7 +160,8 @@ class Manager(Person):
         Person.__init__(self, a)
         
 m = Manager(10, 100)
-print(m.a, m.b)                                    # (20, 100)
+print(m.a, m.b)                                                     # (20, 100)
+
 
 print("-" * 20 + "#5 Composition getattr() instead of inheritance" + "-" * 20)
 

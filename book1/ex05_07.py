@@ -73,12 +73,11 @@ def ConvertFromDecimal(s,b):
     
     return rv   
 
-
 def ConvertSimple(b1,s,b2):
     d = ConvertToDecimal(b1,s)
     rv = ConvertFromDecimal(d,b2)
     return rv
-    
+
 
 class Ex05_07(unittest.TestCase):
     

@@ -1,5 +1,12 @@
 
 
+# USEFUL LINKS:
+# https://doanduyhai.wordpress.com/2012/08/04/design-pattern-the-asynchronous-dispatcher/
+# https://stackoverflow.com/questions/2465521/what-is-the-dispatcher-design-pattern
+
+# GENERAL INFORMATION:
+
+
 # Not sure that it's a dispatcher.
 # Just something to forward calls to different objects.
 # Something like dispatchers in Phoenix.

@@ -1,5 +1,5 @@
 
-print "-"*20 + "#0 Class trees" + "-"*20
+print("-"*20 + "#0 Class trees" + "-"*20)
 
 # - Each class statement generates a new class object.
 # - Each time a class is called, it generates a new instance object.
