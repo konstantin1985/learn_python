@@ -1,7 +1,7 @@
 
 
 
-# Lutz Chepter 32
+# Lutz Chapter 32
 
 print("-" * 20 + "#1 Extending Built-in Types by Embedding" + "-" * 20)
 

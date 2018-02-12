@@ -1,6 +1,11 @@
 
-# USEFUL LINKS
+# MAIN SOURCE:
+# Lutz
 
+# USEFUL LINKS
+# http://jfine-python-class.readthedocs.org/en/latest/property_from_class.html#about-properties
+# http://stackoverflow.com/questions/15458613/python-why-is-read-only-property-writable
+# https://www.python-course.eu/python3_properties.php
 
 # GENERAL DESCRIPTION
 
@@ -29,7 +34,7 @@
 # slots manage instance storage, while properties intercept access and
 # compute values arbitrarily.
 
-print("-" * 20 + "#1 Property basics" + "-" * 20)
+print("-" * 20 + "# 1 Property basics" + "-" * 20)
 
 # You generate a property by calling the property built-in function,
 # passing in up to three accessor methods-handlers for get, set, and
@@ -78,7 +83,44 @@ print(x.job)                                                       # Normal fetc
 # in attribute name is usually preferable when the set of attributes to be
 # supported cannot be determined when the class is coded.
 
-print("-" * 20 + "#2 __getattribute__ and Descriptors: Attribute Tools" + "-" * 20)
+print("-" * 20 + "# 2 Property as a decorator" + "-" * 20)
+
+class First(object):
+
+    def __init__(self):
+        self.width = 10;
+        self.length = 5;
+
+    @property
+    def attrib(self):
+        return self.width * self.length
+    
+f = First()
+print(f.attrib)
+# f.attrib = 5                                                     # There is no setter   
+ 
+class Second(object):
+
+    def __init__(self):
+        self.value = 10
+
+    @property
+    def attrib(self):
+        print('getter')
+        return self.value
+
+    @attrib.setter
+    def attrib(self, value):
+        print('setter')
+        self.value = value
+
+s = Second()
+print(s.attrib)                                                    # getter 10         
+s.attrib = 20                                                      # setter
+print(s.attrib)                                                    # getter 20
+
+
+print("-" * 20 + "# 3 __getattribute__ and Descriptors: Attribute Tools" + "-" * 20)
 
 # The __getattribute__ operator (may create loops) overloading method, 
 # available for new-style classes only, allows a class to intercept all 

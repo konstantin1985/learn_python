@@ -1,4 +1,6 @@
 
+#[Lutz]
+
 import os
 
 print('-' * 10 + "A.1. List comprehensions basics" + '-' * 10)

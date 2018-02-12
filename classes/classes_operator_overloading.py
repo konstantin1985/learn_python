@@ -1,4 +1,8 @@
 
+# USEFUL LINKS:
+
+
+# GENERAL INFORMATION:
 
 # Specially named methods such as __init__, __add__, and __str__ are inherited by
 # subclasses and instances, just like any other names assigned in a class. 
@@ -63,44 +67,47 @@ print(Y.data)                                                        # 3
 
 print("-" * 20 + "#1 Indexing and Slicing: __getitem__ and __setitem__" + "-" * 20)
 
-# When an instance X appears in and indexing expression like X[i], Python calls the 
-# __getitem__ method inherited by the instance, passing X to the first argument and 
-# the index in brackets to the second argument
+# When an instance X appears in and indexing expression like
+# X[i], Python calls the __getitem__ method inherited by the
+# instance, passing X to the first argument and the index in
+# brackets to the second argument.
 
 class Indexer:
     def __getitem__(self, index):
         return index ** 2
 
 X = Indexer()
-print X[2]               #4
+print X[2]                                                           # 4
 
 for i in range(5):
-    print(X[i])          #0 1 4 9 16
+    print(X[i])                                                      # 0 1 4 9 16
 
-# Previous class won't handle slicing because its math assumes integer indexes are passed
+# Previous class won't handle slicing because its math assumes
+# integer indexes are passed
+
 # print(X[1:3])                                                      # TypeError: unsupported operand type(s) for ** or pow(): 'slice' and 'int'
  
-class NewIndexer:
+class Indexer2:
     data = [5, 6, 7, 8, 9]
     def __getitem__(self, index):                                    # Called for index or slice
-        print('getitem:', index)                                     # 
+        print('getitem:', index) 
         return self.data[index]                                      # Perform index or slice
 
-NX = NewIndexer()
-print(NX[0])                                                         # ('getitem:', 0)  5
-print(NX[-1])                                                        # ('getitem:', -1) 9
-print(NX[2:4])                                                       # ('getitem:', slice(2, 4, None)) [7, 8]
-print(NX[1:])                                                        # ('getitem:', slice(1, 2147483647, None)) [6, 7, 8, 9]
-# print(NX[:-1])                                                     # AttributeError: NewIndexer instance has no attribute '__len__' - may be ok in Python 3.X
+X2 = Indexer2()
+print(X2[0])                                                         # ('getitem:', 0)  5
+print(X2[-1])                                                        # ('getitem:', -1) 9
+print(X2[2:4])                                                       # ('getitem:', slice(2, 4, None)) [7, 8]
+print(X2[1:])                                                        # ('getitem:', slice(1, 2147483647, None)) [6, 7, 8, 9]
+# print(X2[:-1])                                                     # AttributeError: NewIndexer instance has no attribute '__len__' - may be ok in Python 3.X
 
-# Where needed, __getitem__ can test the type of its argument, and extract slice object
-# bounds-slice objects have attributes start, stop, and step, any of which can be None
-# if omitted
+# Where needed, __getitem__ can test the type of its argument,
+# and extract slice object bounds-slice objects have attributes
+# start, stop, and step, any of which can be None if omitted.
 
-# If used, the __setitem__ index assignment method similarly intercepts both index and
-# slice assignments
+# If used, the __setitem__ index assignment method similarly 
+# intercepts both index and slice assignments.
 
-class NewNewIndexer:
+class Indexer3:
     
     def __getitem__(self, index):
         if isinstance(index, int):
@@ -111,19 +118,19 @@ class NewNewIndexer:
     def __setitem__(self,index,value):
         print('__setitem__', index, value)
 
-NNX = NewNewIndexer()                                                
-NNX[99]                                                              # ('indexing', 99)
-NNX[1:99:2]                                                          # ('slicing', 1, 99, 2)
-NNX[1:]                                                              # ('slicing', 1, 2147483647, None)
+X3 = Indexer3()                                                
+X3[99]                                                               # ('indexing', 99)
+X3[1:99:2]                                                           # ('slicing', 1, 99, 2)
+X3[1:]                                                               # ('slicing', 1, 2147483647, None)
 
-NNX[1] = 100                                                         # ('__setitem__', 1, 100)
-NNX[2:4] = 'ab'                                                      # ('__setitem__', slice(2, 4, None), 'ab')
+X3[1] = 100                                                          # ('__setitem__', 1, 100)
+X3[2:4] = 'ab'                                                       # ('__setitem__', slice(2, 4, None), 'ab')
 
 print("-" * 20 + "#2 Index iteration __getitem__" + "-" * 20)
 
-# __getitem__ also turns out to be one way to overload iteration in Python-if this method is
-# defined, for loops call the class's __getitem__ each time through, with successively
-# higher offsets
+# __getitem__ also turns out to be one way to overload iteration 
+# in Python-if this method is defined, for loops call the class's
+# __getitem__ each time through, with successively higher offsets.
 
 class StepperIndex:
     def __getitem__(self, i):
@@ -135,8 +142,10 @@ X.data = "Spam"
 print(X[1])                                                          # p
 for item in X:
     print(item),                                                     # S p a m
+print()
 
-# Any class that supports for loops automatically supports all iteration contexts in Python
+# Any class that supports for loops automatically supports all 
+# iteration contexts in Python.
 
 print('p' in X)                                                      # True
 print([c for c in X])                                                # ['S', 'p', 'a', 'm']
@@ -150,17 +159,23 @@ print(X)                                                             # <__main__
 
 print("-" * 20 + "#3 Iterable Objects: __iter__ and __next__" + "-" * 20)
 
-# Today, all iteration contexts in Python will try the __iter__ method first,
-# before trying __getitem__. That is, they prefer the iteration protocol we learned about
-# in Chapter 14 to repeatedly indexing an object; only if the object does not support the
-# iteration protocol is indexing attempted instead. Generally speaking, you should prefer
-# __iter__ too-it supports general iteration contexts better than __getitem__ can.
+# Today, all iteration contexts in Python will try the __iter__
+# method first, before trying __getitem__. That is, they prefer
+# the iteration protocol we learned about in Chapter 14 to repe-
+# atedly indexing an object; only if the object does not support
+# the iteration protocol is indexing attempted instead. Generally
+# speaking, you should prefer __iter__ too-it supports general 
+# iteration contexts better than __getitem__ can.
 
-# Technically, iteration contexts work by passing an iterable object to the iter built-in
-# function to invoke an __iter__ method, which is expected to return an iterator object.
-# If it's provided, Python then repeatedly calls this iterator object's __next__ method to
-# produce items until a StopIteration exception is raised. A next built-in function is also
-# available as a convenience for manual iterations-next(I) is the same as I.__next__().
+# Technically, iteration contexts work by passing an iterable 
+# object to the iter built-in function to invoke an __iter__ 
+# method, which is expected to return an iterator object.
+
+# If it's provided, Python then repeatedly calls this iterator
+# object's __next__ method to produce items until a StopIteration
+# exception is raised. A next built-in function is also available
+# as a convenience for manual iterations-next(I) is the same as 
+# I.__next__().
 
 class Squares(object):
     
@@ -168,10 +183,12 @@ class Squares(object):
         self.value = start - 1
         self.stop = stop
     
-    # Here, the iterator object returned by __iter__ is simply the instance self, because the
-    # __next__ method is part of this class itself. In more complex scenarios, the iterator
-    # object may be defined as a separate class and object with its own state information to
-    # support multiple active iterations over the same data
+    # Here, the iterator object returned by __iter__ is simply the
+    # instance self, because the __next__ method is part of this
+    # class itself. In more complex scenarios, the iterator object
+    # may be defined as a separate class and object with its own 
+    # state information to support multiple active iterations over
+    # the same data.
     
     def __iter__(self):                                              # Get iterator object on iter
         print("__iter__")
@@ -208,7 +225,8 @@ for i in Squares(1, 5):
 # Because __iter__ objects retain explicitly managed state between
 # next calls, they can be more general than __getitem__.
 
-# Manual iterations work the same on user-defined iterables as they do on built-in types
+# Manual iterations work the same on user-defined iterables as they
+# do on built-in types.
 
 X = Squares(1, 5)
 I = iter(X)
@@ -217,12 +235,14 @@ print next(I)
 print next(I)
 print next(I)
 print next(I)
-#print next(I) #StopIteration exception
+# print next(I)                                                      # StopIteration exception
 
-# On the other hand, iterables based on __iter__ can sometimes be more complex and
-# less functional than those based on __getitem__. They are really designed for iteration,
-# not random indexing-in fact, they don't overload the indexing expression at all, though you 
-# can collect their items in a sequence such as a list to enable other operations:
+# On the other hand, iterables based on __iter__ can sometimes be 
+# more complex and less functional than those based on __getitem__.
+# They are really designed for iteration, not random indexing - in
+# fact, they don't overload the indexing expression at all, though
+# you can collect their items in a sequence such as a list to enable
+# other operations:
 
 X = Squares(1, 5)
 # X[1]                                                               # TypeError: 'Squares' object does not support indexing
@@ -230,15 +250,16 @@ print list(X)[1]                                                     # 4
 
 print("-" * 20 + "#4 Iterators Single versus multiple scans" + "-" * 20)
 
-# Unlike our prior __getitem__ example, though, we also need to be aware that 
-# a class's __iter__ may be designed for a single traversal only, not
-# many. Classes choose scan behavior explicitly in their code.
+# Unlike our prior __getitem__ example, though, we also need to be
+# aware that a class's __iter__ may be designed for a single traversal
+# only, not many. Classes choose scan behavior explicitly in their code.
 
-# For example, because the current Squares class's __iter__ always returns self with just
-# one copy of iteration state, it is a one-shot iteration; once you've iterated over an 
-# instance of that class, it's empty. Calling __iter__ again on the same instance returns
-# self again, in whatever state it may have been left. You generally need to make a new
-# iterable instance object for each new iteration
+# For example, because the current Squares class's __iter__ always
+# returns self with just one copy of iteration state, it is a one-shot
+# iteration; once you've iterated over an instance of that class, it's
+# empty. Calling __iter__ again on the same instance returns self again,
+# in whatever state it may have been left. You generally need to make a
+# new iterable instance object for each new iteration.
 
 X = Squares(1, 5)
 print([n for n in X])                                                # [1, 4, 9, 16, 25]
@@ -249,8 +270,9 @@ print(list(Squares(1, 3)))                                           # [1, 4, 9]
 
 print(":".join(map(str, Squares(1, 5))))                             # 1:4:9:16:25
 
-# Just like single-scan built-ins such as map, converting to a list supports multiple scans
-# as well, but adds time and space performance costs
+# Just like single-scan built-ins such as map, converting to a list 
+# supports multiple scans as well, but adds time and space performance
+# costs.
 
 X = Squares(1, 5)
 print(tuple(X), tuple(X))                                            # (1, 4, 9, 16, 25) ()
@@ -260,9 +282,10 @@ print(tuple(X), tuple(X))                                            # (1, 4, 9,
 
 print("-" * 20 + "#5 Iterators Classes versus generators" + "-" * 20)
 
-# Unlike classes, generator functions and expressions implicitly save their state and create
-# the methods required to conform to the iteration protocol-with obvious advantages
-# in code conciseness for simpler examples like these. 
+# Unlike classes, generator functions and expressions implicitly save
+# their state and create the methods required to conform to the iteration
+# protocol-with obvious advantages in code conciseness for simpler examples
+# like these. 
 
 def gsquares(start, stop):
     for i in range(start, stop + 1):
@@ -278,15 +301,17 @@ print [x ** 2 for x in range(1, 6)]                                  # [1, 4, 9,
 
 print("-" * 20 + "#6 Multiple Iterators on One Object" + "-" * 20)
 
-# Here, the outer loop grabs an iterator from the string by calling iter, and each nested
-# loop does the same to get an independent iterator. Because each active iterator has its
-# own state information, each loop can maintain its own position in the string, regardless
+# Here, the outer loop grabs an iterator from the string by calling 
+# iter, and each nested loop does the same to get an independent ite-
+# rator. Because each active iterator has its own state information,
+# each loop can maintain its own position in the string, regardless
 # of any other active loops.
 
-# Generator functions and expressions, as well as built-ins like map and zip, proved to be 
-# single-iterator objects, thus supporting a single active scan. By contrast, the range built-in,
-# and other built-in types like lists, support multiple active iterators with independent
-# positions.
+# Generator functions and expressions, as well as built-ins like map
+# and zip, proved to be single-iterator objects, thus supporting a 
+# single active scan. By contrast, the range built-in, and other built-
+# in types like lists, support multiple active iterators with indepen-
+# dent positions.
 
 S = 'ace'
 for x in S:
@@ -294,12 +319,14 @@ for x in S:
         print(x + y),                                                # aa ac ae ca cc ce ea ec ee
 print()
 
-# To achieve the multiple-iterator effect, __iter__ simply needs to define a new stateful
-# object for the iterator, instead of returning self for each iterator request.
+# To achieve the multiple-iterator effect, __iter__ simply needs to 
+# define a new stateful object for the iterator, instead of returning
+# self for each iterator request.
 
-# The following SkipObject class, for example, defines an iterable object that skips every
-# other item on iterations. Because its iterator object is created anew from a supplemental
-# class for each iteration, it supports multiple active loops directly
+# The following SkipObject class, for example, defines an iterable
+# object that skips every other item on iterations. Because its itera-
+# tor object is created anew from a supplemental class for each itera-
+# tion, it supports multiple active loops directly
 
 class SkipObject:
     
@@ -308,7 +335,7 @@ class SkipObject:
         
     def __iter__(self):
         return SkipIterator(self.wrapped)                            # New iterator each time
-    
+  
 
 class SkipIterator:
     
@@ -344,12 +371,14 @@ for x in S[::2]:
 print()
 
 
-# This isn't quite the same, though, for two reasons. First, each slice expression here will
-# physically store the result list all at once in memory; iterables, on the other hand, pro-
-# duce just one value at a time, which can save substantial space for large result lists.
-# Second, slices produce new objects, so we're not really iterating over the same object in
-# multiple places here. To be closer to the class, we would need to make a single object
-# to step across by slicing ahead of time.
+# This isn't quite the same, though, for two reasons. First, each slice
+# expression here will physically store the result list all at once in
+# memory; iterables, on the other hand, produce just one value at a time,
+# which can save substantial space for large result lists. 
+
+# Second, slices produce new objects, so we're not really iterating over
+# the same object in multiple places here. To be closer to the class, we
+# would need to make a single object to step across by slicing ahead of time.
 
 S = 'abcdef'
 S = S[::2] 
@@ -359,20 +388,22 @@ for x in S:
         print(x + y),                                                # aa ac ae ca cc ce ea ec ee
 print()
 
-# We could use this technique with a database object, for example, to support iterations
-# over large database fetches, with multiple cursors into the same query result
+# We could use this technique with a database object, for example, to
+# support iterations over large database fetches, with multiple cursors
+# into the same query result.
 
 print("-" * 20 + "#7 Coding Alternative: __iter__ plus yield" + "-" * 20)
 
-# Because generator functions automatically save local variable state and create 
-# required iterator methods, they fit this role well, and complement the state 
-# retention and other utility we get from classes.
+# Because generator functions automatically save local variable state
+# and create required iterator methods, they fit this role well, and
+# complement the state retention and other utility we get from classes.
 
-# As a review, recall that any function that contains a yield statement is turned into a
-# generator function. When called, it returns a new generator object with automatic 
-# retention of local scope and code position, an automatically created __iter__ method
-# that simply returns itself, and an automatically created __next__ method (next in 2.X)
-# that starts the function or resumes it where it last left off
+# As a review, recall that any function that contains a yield statement
+# is turned into a generator function. When called, it returns a new gen-
+# erator object with automatic retention of local scope and code position,
+# an automatically created __iter__ method that simply returns itself, and
+# an automatically created __next__ method (next in 2.X) that starts the
+# function or resumes it where it last left off.
 
 def gen(x):
     for i in range(x):
@@ -384,11 +415,12 @@ I = iter(G)                                                          # Runs __it
 print(next(I), next(I))                                              # (0, 1)
 print(list(gen(5)))                                                  # [0, 1, 4, 9, 16]
 
-# This is still true even if the generator function with a yield happens to be a method
-# named __iter__: whenever invoked by an iteration context tool, such a method will
-# return a new generator object with the requisite __next__. As an added bonus, generator
-# functions coded as methods in classes have access to saved state in both instance 
-# attributes and local scope variables.
+# This is still true even if the generator function with a yield happens
+# to be a method named __iter__: whenever invoked by an iteration context
+# tool, such a method will return a new generator object with the requisite
+# __next__. As an added bonus, generator functions coded as methods in
+# classes have access to saved state in both instance attributes and local
+# scope variables.
 
 class Squares2:
     
@@ -400,17 +432,18 @@ class Squares2:
         for value in range(self.start, self.stop + 1):
             yield value ** 2
 
-# For loops and other iteration tools iterate through instances of this class automatically
+# For loops and other iteration tools iterate through instances of this
+# class automatically
 
 for i in Squares2(0, 4):
     print(i),                                                        # 0 1 4 9 16
 print()
 
 # Running our class instance through iter obtains the result of calling
-# __iter__ as usual, but in this case the result is a generator object with an automatically
-# created __next__ of the same sort we always get when calling a generator function that
-# contains a yield. The only difference here is that the generator function is automatically
-# called on.
+# __iter__ as usual, but in this case the result is a generator object 
+# with an automatically created __next__ of the same sort we always get
+# when calling a generator function that contains a yield. The only diffe-
+# rence here is that the generator function is automatically called on.
 
 S = Squares2(1, 5)
 print(S)                                                             # <__main__.Squares2 instance at 0xb73012ec>
@@ -428,8 +461,9 @@ try:
 except StopIteration:
     print("StopIteration")                                           # StopIteration
 
-# It may also help to notice that we could name the generator method something other
-# than __iter__ and call manually to iterate-Squares(1,5).gen(), for example
+# It may also help to notice that we could name the generator method
+# something other than __iter__ and call manually to
+# iterate-Squares(1,5).gen(), for example.
 
 class Squares3():
     
@@ -625,29 +659,34 @@ print(I[1:3])                                                      # get[slice(1
 
 print("-" *  20 + "#10 Attribute Access: __getattr__ and __setattr__" + "-" * 20)
 
-# In Python, classes can also intercept basic attribute access (a.k.a. qualification) when
-# needed or useful. Specifically, for an object created from a class, the dot operator 
-# expression object.attribute can be implemented by your code too, for reference, 
-# assignment, and deletion contexts.
+# In Python, classes can also intercept basic attribute access (a.k.a.
+# qualification) when needed or useful. Specifically, for an object 
+# created from a class, the dot operator expression object.attribute
+# can be implemented by your code too, for reference, assignment, and
+#  deletion contexts.
 
-# The __getattr__ method intercepts attribute references. It's called with the attribute
-# name as a string whenever you try to qualify an instance with an undefined (nonexistent)
-# attribute name. It is not called if Python can find the attribute using its inheritance tree
+# The __getattr__ method intercepts attribute references. It's called
+# with the attribute name as a string whenever you try to qualify an
+# instance with an undefined (nonexistent) attribute name. It is not
+# called if Python can find the attribute using its inheritance tree
 # search procedure.
 
-# Because of its behavior, __getattr__ is useful as a hook for responding to attribute
-# requests in a generic fashion. It's commonly used to delegate calls to embedded (or
-# "wrapped") objects from a proxy controller object-of the sort introduced in 
-# Chapter 28's introduction to delegation. This method can also be used to adapt classes to an
-# interface, or add accessors for data attributes after the fact-logic in a method that
-# validates or computes an attribute after it's already being used with simple dot notation
+# Because of its behavior, __getattr__ is useful as a hook for respon-
+# ding to attribute requests in a generic fashion. It's commonly used
+# to delegate calls to embedded (or "wrapped") objects from a proxy 
+# controller object-of the sort introduced in Chapter 28's introduction
+# to delegation. This method can also be used to adapt classes to an
+# interface, or add accessors for data attributes after the fact-logic
+# in a method that validates or computes an attribute after it's already
+# being used with simple dot notation.
 
-# In effect, age becomes a dynamically computed attribute - its value is
-# formed by running code, not fetching an object.
+# In effect, age becomes a dynamically computed attribute - its value
+# is formed by running code, not fetching an object.
 
-# The basic mechanism underlying these goals is straightforward - the following class
-# catches attribute references, computing the value for one dynamically, and triggering
-# an error for others unsupported with the raise statement
+# The basic mechanism underlying these goals is straightforward - the
+# following class catches attribute references, computing the value for
+# one dynamically, and triggering an error for others unsupported with
+# the raise statement.
 
 class Empty:
     

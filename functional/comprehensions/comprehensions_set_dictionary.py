@@ -1,5 +1,8 @@
 
 
+#[Lutz]
+
+
 print('-' * 10 + "A.1. Comprehension syntax summary" + '-' * 10)
 
 # For sets, the new literal form {1, 3, 2} is equivalent to 

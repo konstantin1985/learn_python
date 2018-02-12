@@ -1,6 +1,19 @@
 
 
 
+# USEFUL LINKS:
+# https://stackoverflow.com/questions/252703/difference-between-append-vs-extend-list-methods-in-python
+
+# x = [1, 2, 3]
+# x.append([4, 5])
+# print (x)                              # [1, 2, 3, [4, 5]]
+
+# x = [1, 2, 3]
+# x.extend([4, 5])
+# print (x)                              # [1, 2, 3, 4, 5]
+
+
+
 # Applies a function to items in a sequence and collects all the results in a new list
 
 print(list(map(abs, [-1, -2, 0, 1, 2]))) # [1, 2, 0, 1, 2]

@@ -1,5 +1,7 @@
 
 
+#[Lutz]
+
 import os
 
 print('-' * 10 + "A.1. Formal syntax" + '-' * 10)
