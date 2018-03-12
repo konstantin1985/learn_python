@@ -100,12 +100,12 @@ print("-" * 20 + "#3 The 'New Style' Class Model" + "-" * 20)
 
 print("-" * 20 + "#3.1 Attribute Fetch for Built-ins Skips Instances" + "-" * 20)
 
-# A key difference between __getattr__ and __getattribute__ is that __getattr__ is 
-# only invoked if the attribute wasn't found the usual ways. It's good for implementing
-# a fallback for missing attributes, and is probably the one of two you want.
-# __getattribute__ is invoked before looking at the actual attributes on the object, 
-# and so can be tricky to implement correctly. You can end up in infinite recursions
-# very easily.
+# A key difference between __getattr__ and __getattribute__ is that __getattr__
+# is only invoked if the attribute wasn't found the usual ways. It's good for
+# implementing a fallback for missing attributes, and is probably the one of 
+# two you want. __getattribute__ is invoked before looking at the actual 
+# attributes on the object, and so can be tricky to implement correctly. You
+# can end up in infinite recursions very easily.
 
 # In new style classes:
 # - implicit built-in operators (print(), X[]) aren't routed to __getattr__

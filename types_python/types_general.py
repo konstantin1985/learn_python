@@ -1,61 +1,94 @@
-# Expressions vs statements
+
+# MAIN SOURCE:
+# Lutz, "Learning Python" Chapter 9
+
+# USEFUL LINKS:
+# 1) Expressions vs statements
 # https://stackoverflow.com/questions/4728073/what-is-the-difference-between-an-expression-and-a-statement-in-python 
 
 # Expressions only contain identifiers, literals and operators, 
 # where operators include arithmetic and boolean operators, the 
-# function call operator () the subscription operator [] and similar, 
-# and can be reduced to some kind of "value", which can be any Python object. 
+# function call operator () the subscription operator [] and si-
+# milar, and can be reduced to some kind of "value", which can
+# be any Python object. 
 
-# Statements (see 1, 2), on the other hand, are everything that can make up
-# a line (or several lines) of Python code. Note that expressions are statements
-# as well.
+# Statements (see 1, 2), on the other hand, are everything that
+# can make up a line (or several lines) of Python code. Note
+# that expressions are statements as well.
+
+# GENERAL INFORMATION:
+
+
+print("-" * 20 + "# 1 References Versus Copies" + "-" * 20)
 
 # Assignments always store references to objects, not copies
-# of those objects. In practice, this is usually what you want. Because assignments can
-# generate multiple references to the same object, though, it's important to be aware that
-# changing a mutable object in place may affect other references to the same object else-
-# where in your program. If you don't want such behavior, you'll need to tell Python to
-# copy the object explicitly.
+# of those objects. In practice, this is usually what you want. 
+# Because assignments can generate multiple references to the
+# same object, though, it's important to be aware that changing
+# a mutable object in place may affect other references to the
+# same object elsewhere in your program. If you don't want such
+# behavior, you'll need to tell Python to copy the object
+# explicitly.
 
 X = [1, 2, 3]
-L = ['a', X, 'b']    # L = ['a', X[:], 'b'] to really copy
-D = {'x':X, 'y':2}   # D = {'x':X, 'y':2} to really copy
+L = ['a', X, 'b']                               # L = ['a', X[:], 'b'] to really copy
+D = {'x':X, 'y':2}                              # D = {'x':X[:], 'y':2} to really copy
 
-# At this point, there are three references to the first list created: from the name X, from
-# inside the list assigned to L, and from inside the dictionary assigned to D.
-# Because lists are mutable, changing the shared list object from any of the three refer-
-# ences also changes what the other two reference:
+# At this point, there are three references to the first list
+# created: from the name X, from inside the list assigned to L,
+# and from inside the dictionary assigned to D. Because lists
+# are mutable, changing the shared list object from any of the
+# three references also changes what the other two reference:
 
 X[1] = 'surprise'
-print(L)  # ['a', [1, 'surprise', 3], 'b']
-print(D)  # {'y': 2, 'x': [1, 'surprise', 3]}
+print(L)                                        # ['a', [1, 'surprise', 3], 'b']
+print(D)                                        # {'y': 2, 'x': [1, 'surprise', 3]}
 
-# You can do real copy and there will not be this behavior
+# If you really do want copies, however, you can request them:
+# - Slice expressions with empty limits (L[:]) copy sequences.
+# - The dictionary, set, and list copy method (X.copy()) copies
+#   a dictionary, set, or list (the list's copy is new as of 3.3).
+# - Some built-in functions, such as list and dict make copies 
+#   (list(L), dict(D), set(S)).
+# - The copy standard library module makes full copies when needed.
+
 L = [1, 2, 3]
 D = {'a':1, 'b':2}
-A = L[:]      # or list(L), there is no .copy for lists
-B = D.copy()  # or dict(L)
+A = L[:]                                        # or list(L), there is no .copy() for lists in 2.7
+B = D.copy()                                    # or dict(L)
+
+# This way, changes made from the other variables will change
+# the copies, not the originals.
 
 A[1] = 'Ni'
 B['c'] = 'spam'
-print(L, D)   # ([1, 2, 3], {'a': 1, 'b': 2})
+print(L, D)                                     # ([1, 2, 3], {'a': 1, 'b': 2})
 
-# Copy doesn't work for nested structures
+# Empty-limit slices and the dictionary copy method only make
+# top-level copies; that is, they do not copy nested data 
+# structures, if any are present.
+
 A = ['a0', 'a1']
 B = [A, 'b1', 'b2']
 C = B[:]
 A[0] = "Haha"
 B[1] = "foo"
-print(C)  # [['Haha', 'a1'], 'b0', 'b1'] - nested list A wasn't copied
+print(C)                                        # [['Haha', 'a1'], 'b1', 'b2'] - nested list A wasn't copied
 
-# To fully copy a nested structure
+# If you need a complete, fully independent copy of a deeply
+# nested data structure (like the various record structures
+# we've coded in recent chapters), use the standard copy module.
+# This call recursively traverses objects to copy all their parts.
+
 import copy
 A = ['a0', 'a1']
 B = [A, 'b1', 'b2']
 C = copy.deepcopy(B)
 A[0] = "Haha"
 B[1] = "foo"
-print(C)  # [['a0', 'a1'], 'b1', 'b2']
+print(C)                                        # [['a0', 'a1'], 'b1', 'b2']
+
+print("-" * 20 + "# 2 Comparisons, Equality, and Truth" + "-" * 20)
 
 # Python comparisons always inspect all parts of compound objects until a
 # result can be determined. In fact, when nested objects are present, Python automatically

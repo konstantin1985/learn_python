@@ -1,4 +1,13 @@
 
+
+# MAIN SOURCE:
+# Lutz, "Learning Python"
+
+# USEFUL LINKS:
+
+# GENERAL INFORMATION:
+
+
 print("-"*20 + "#0 Class trees" + "-"*20)
 
 # - Each class statement generates a new class object.
@@ -166,15 +175,16 @@ sup.method()
 sub = Sub()
 sub.method()
 
-print "-"*20 + "#5 Nested classes" + "-"*20
+print("-" * 20 + "# 5 Nested classes" + "-" * 20)
 
-'''
-Most importantly, the lookup rules for simple names like X never search enclosing
-class statements-just defs, modules, and built-ins (it's the LEGB rule, not CLEGB!).
-In method1, for example, X is found in a def outside the enclosing class that has the same
-name in its local scope. To get to names assigned in the class (e.g., methods), we must
-fetch them as class or instance object attributes, via self.X in this case.
-'''
+# Most importantly, the lookup rules for simple names like X never
+# search enclosing class statements-just defs, modules, and built-ins
+# (it's the LEGB rule, not CLEGB!).
+
+# In method1, for example, X is found in a def outside the enclosing
+# class that has the same name in its local scope. To get to names
+# assigned in the class (e.g., methods), we must fetch them as class
+# or instance object attributes, via self.X in this case.
 
 X = 1
 
@@ -183,34 +193,33 @@ def nester():
     print(X)
     class C:
         X = 3
-        print X
+        print(X)
         def method1(self):
-            print(X)         #It's 2, not 3!!!
+            print(X)                                            # It's 2, not 3!!!
             print(self.X)
         def method2(self):
             X = 4
             print(X)
-            self.X = 5       #Hides class
+            self.X = 5                                          # Hides class
             print(self.X)
-    I = C()
-    I.method1()
-    I.method2()
+    I = C()                                                     # 3
+    I.method1()                                                 # 2 3
+    I.method2()                                                 # 4 5
             
 
-print(X) #1
-nester() #2 3 2 3 4 5
+print(X)                                                        # 1
+nester()                                                        # 2 3 2 3 4 5
     
-print "-"*20 + "#6 Namespace dictionaries" + "-"*20
-
-'''  
-In Chapter 23, we learned that module namespaces have a concrete implementation as
-dictionaries, exposed with the built-in __dict__ attribute. In Chapter 27 and Chap-
-ter 28, we learned that the same holds true for class and instance objects-attribute
-qualification is mostly a dictionary indexing operation internally, and attribute inher-
-itance is largely a matter of searching linked dictionaries. In fact, within Python, in-
-stance and class objects are mostly just dictionaries with links between them. Python
-exposes these dictionaries, as well as their links, for use in advanced roles (e.g., for
-'''
+print("-" * 20 + "# 6 Namespace dictionaries" + "-" * 20)
+ 
+# In Chapter 23, we learned that module namespaces have a concrete
+# implementation as dictionaries, exposed with the built-in __dict__
+# attribute. In Chapter 27 and Chapter 28, we learned that the same
+# holds true for class and instance objects-attribute qualification
+# is mostly a dictionary indexing operation internally, and attribute 
+# inheritance is largely a matter of searching linked dictionaries.
+# In fact, within Python, instance and class objects are mostly just
+# dictionaries with links between them.
 
 class Super(object):
     def hello(self):
@@ -220,43 +229,42 @@ class Sub(Super):
     def hola(self):
         self.data2 = 'eggs'
 
-'''
-If we can't find attribute in instance we are looking for it in the class
-'''
-        
+# If we can't find attribute in instance we are looking for it in the
+# class. If we can't find attribute in the class, we are looking for
+# them in a parent class.
+
 X = Sub()
-print X.__dict__        #{}
-print X.__class__       #<class '__main__.Sub'>
-print Sub.__bases__     #(<class '__main__.Super'>,)
-print Super.__bases__   #(<type 'object'>,)
+print(X.__dict__)                                               # {}
+print(X.__class__)                                              # <class '__main__.Sub'>
+print(Sub.__bases__)                                            # (<class '__main__.Super'>,)
+print(Super.__bases__)                                          # (<type 'object'>,)
 
 Y = Sub()
 X.hello()
-print X.__dict__                    #{'data1': 'spam'}
+print(X.__dict__)                                               # {'data1': 'spam'}
 X.hola()
-print X.__dict__                    #{'data1': 'spam', 'data2': 'eggs'}
+print(X.__dict__)                                               # {'data1': 'spam', 'data2': 'eggs'}
 
 #Classes
-print list(Sub.__dict__.keys())     #['__module__', '__doc__', 'hola']
-print list(Super.__dict__.keys())   #['__dict__', '__module__', '__weakref__', 'hello', '__doc__']
+print(list(Sub.__dict__.keys()))                                # ['__module__', '__doc__', 'hola']
+print(list(Super.__dict__.keys()))                              # ['__dict__', '__module__', '__weakref__', 'hello', '__doc__']
 
-print Y.__dict__                    #{} - still empty
+print(Y.__dict__)                                               # {} - still empty
 
-'''
-Because attributes are actually dictionary keys inside Python, there are really two ways
-to fetch and assign their values-by qualification, or by key indexing
-'''
+# Because attributes are actually dictionary keys inside Python,
+# there are really two ways to fetch and assign their values:
+# - by qualification
+# - by key indexing
 
-print X.data1, X.__dict__['data1']  #spam spam
+print(X.data1, X.__dict__['data1'])                             # spam spam
 X.data3 = 'toast'
-print X.__dict__                    #{'data1': 'spam', 'data3': 'toast', 'data2': 'eggs'}
+print(X.__dict__)                                               # {'data1': 'spam', 'data3': 'toast', 'data2': 'eggs'}
 X.__dict__['data3'] = 'ham'
-print X.data3                       #ham
+print(X.data3)                                                  # ham
 X.__dict__['data4'] = 'kozel'
-print X.__dict__                    #{'data4': 'kozel', 'data1': 'spam', 'data3': 'ham', 'data2': 'eggs'}
+print X.__dict__                                                # {'data4': 'kozel', 'data1': 'spam', 'data3': 'ham', 'data2': 'eggs'}
 
-
-print "-"*20 + "#7 Namespace links, tree climber" + "-"*20
+print("-" * 20 + "# 7 Namespace links, tree climber" + "-" * 20)
 
 def classtree(cls, indent):
     print(',' * indent + cls.__name__)
@@ -278,13 +286,12 @@ instancetree(B())
 instancetree(F())
 
 
-print "-"*20 + "#8 Documentation strings" + "-"*20
+print("-" * 20 + "# 8 Documentation strings" + "-" * 20)
 
-'''
-The Python "best practice" rule of thumb is to use docstrings for func-
-tional documentation (what your objects do) and hash-mark comments for more mi-
-cro-level documentation (how arcane bits of code work).
-'''
+# The Python "best practice" rule of thumb is to use docstrings
+# for functional documentation (what your objects do) and hash-mark
+# comments for more micro-level documentation (how arcane bits of
+# code work).
 
 def func(args):
     "I am: docstr.func.__doc__"
@@ -297,10 +304,10 @@ class spam:
         print(self.__doc__)
         print(self.method.__doc__)
 
-print func.__doc__
+print(func.__doc__)
 c = spam()
-print c.__doc__
+print(c.__doc__)
 c.method()
-print c.method.__doc__
+print(c.method.__doc__)
 
 

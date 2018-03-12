@@ -1,4 +1,6 @@
 
+# MAY BE IT'S A SUBTYPE OF THE COMMAND PATTERN
+
 
 # USEFUL LINKS:
 # https://doanduyhai.wordpress.com/2012/08/04/design-pattern-the-asynchronous-dispatcher/

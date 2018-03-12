@@ -431,9 +431,9 @@ print("-" * 20 + "#7 with/as Context Managers" + "-" * 20)
 # exception occurs during a processing step.
 
 # Unlike try/finally, the with statement is based upon an object protocol for
-# specifying actions to be run around a block of code. This makes with less 
+# specifying actions to be run around a block of code. This makes 'with' less 
 # general, qualifies it as redundant in termination roles, and requires coding
-# classes for objects that do not support its protocol. On the other hand, with
+# classes for objects that do not support its protocol. On the other hand, 'with'
 # also handles entry actions, can reduce code size, and allows code contexts to
 # be managed with full OOP.
 
@@ -478,7 +478,7 @@ print("-" * 20 + "#7 with/as Context Managers" + "-" * 20)
 
 # Another example of with is 
  
-# lock = threading.Lock()
+#     lock = threading.Lock()
 #     with lock:
 #     # critical section of code
 #     ...access shared resources...

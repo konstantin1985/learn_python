@@ -8,6 +8,7 @@
 # https://docs.python.org/2/library/xml.etree.elementtree.html
 # https://stackoverflow.com/questions/9112121/elementtree-findall-returning-empty-list
 # https://www.w3.org/TR/xpath/
+# https://stackoverflow.com/questions/2835559/parsing-values-from-a-json-file
 
 # GENERAL INFORMATION:
 
@@ -88,13 +89,24 @@ print("-" * 20 + "# 2 Implementation" + "-" * 20)
 # The example focuses only on XML and JSON, but adding support
 # for more services should be straightforward.
 
+from io import open # so open(... encoding='utf-8') works in Python 2.x
+
 import xml.etree.ElementTree as etree
 import json
+
+# IMPORT: very important to have proper commas in JSON files.
+# For example, not to put a comma after the last item in the list.
+# 
+#      "batter": [
+#        { "id": "1001", "type": "Regular" },
+#        { "id": "1002", "type": "Chocolate" },
+#        { "id": "1003", "type": "Blueberry" }
+#      ]
 
 class JSONConnector:
     def __init__(self, filepath):
         self.data = dict()
-        with open(filepath, mode='r', encoding='utf-8') as f:
+        with open(filepath, mode='r') as f:
             self.data = json.load(f)
             
     @property
@@ -136,7 +148,11 @@ def main():
     # 1. Check error handling
     
     sqlite_factory = connect_to('files/factory_method/person.sq3') 
-    # Cannot connect to files/factory_method/person.sq3
+    
+        # OUTPUT:
+        # Cannot connect to files/factory_method/person.sq3
+    
+    print('-----')
     
     # 2. Work with XML
     
@@ -148,12 +164,76 @@ def main():
     liars = xml_data.findall(".//{}[{}='{}']".format('person', 'lastName', 'Liar'))
     print('found: {} persons'.format(len(liars)))
     
+    
     for liar in liars:
         print('first name: {}'.format(liar.find('firstName').text))
         print('last name: {}'.format(liar.find('lastName').text))
         for p in liar.find("phoneNumbers"):
             print(p.text)
+   
+        # OUTPUT:
+        # found: 2 persons
+        # first name: Jimy
+        # last name: Liar
+        # 212 555-1234
+        # first name: Patty
+        # last name: Liar
+        # 212 555-1234
+        # 001 452-8819
 
+    print('-----')
+
+    # 3. Work with JSON
     
+    json_factory = connect_to('files/factory_method/donut.json')
+    json_data = json_factory.parsed_data
+    
+    print("found: {} donuts".format(len(json_data)))
+    
+    for donut in json_data:
+        print('name: {}'.format(donut['name']))
+        print('price: ${}'.format(donut['ppu']))
+        for t in donut['topping']:
+            print('topping: {} {}'.format(t['id'], t['type']))
+    
+            # OUTPUT:
+            # found: 3 donuts
+            # name: Cake
+            # price: $0.55
+            # topping: 5001 None
+            # topping: 5002 Glazed
+            # topping: 5005 Sugar
+            # topping: 5007 Powdered Sugar
+            # topping: 5006 Chocolate with Sprinkles
+            # topping: 5003 Chocolate
+            # topping: 5004 Maple
+            # name: Raised
+            # price: $0.55
+            # topping: 5001 None
+            # topping: 5002 Glazed
+            # topping: 5005 Sugar
+            # topping: 5003 Chocolate
+            # topping: 5004 Maple
+            # name: Old Fashioned
+            # price: $0.55
+            # topping: 5001 None
+            # topping: 5002 Glazed
+            # topping: 5003 Chocolate
+            # topping: 5004 Maple
+
+
+# Notice that although JSONConnector and XMLConnector have the same interfaces,
+# what is returned by parsed_data() is not handled in a uniform way. Different
+# python code must be used to work with each connector. Although it would be nice
+# to be able to use the same code for all connectors, this is at most times not
+# realistic unless we use some kind of common mapping for the data which is very
+# often provided by external data providers.
+
+# QUESTION: As it is now, the code does not forbid a direct instantiation of a
+# connector. Is it possible to do this? Try doing it.
+# ANSWER: Define JSONConnector and XMLConnector classes inside connection_factory
+# function.
+
+
 if __name__ == "__main__":
     main()
