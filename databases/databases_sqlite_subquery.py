@@ -20,6 +20,8 @@
 #    https://www.khanacademy.org/computing/computer-programming/sql
 #
 
+# GENERAL INFORMATION:
+
 
 import sqlite3 as lite
 import sys
@@ -57,13 +59,15 @@ with conn:
 # Be Rock". The query uses the equal operator (=) to compare albumid 
 #returned by the subquery with the albumid in the tracks table.
 
-    curs = conn.execute("""SELECT trackid, name, albumid
-                           FROM tracks
-                           WHERE albumid = (
+    curs = conn.execute("""SELECT trackid, 
+                                  name, 
+                                  albumid
+                             FROM tracks
+                            WHERE albumid = (
                                                SELECT albumid
-                                               FROM albums
-                                               WHERE title = 'Let There Be Rock'
-                                           );
+                                                 FROM albums
+                                                WHERE title = 'Let There Be Rock'
+                                            );
                         """)
     
     for i in curs: print(i)
@@ -87,8 +91,10 @@ with conn:
 
     # At first, let's see the last names of employees 
 
-    curs = conn.execute("""SELECT employeeid, lastname, country
-                           FROM employees;""")
+    curs = conn.execute("""SELECT employeeid, 
+                                  lastname, 
+                                  country
+                             FROM employees;""")
     
     for i in curs: print(i)       
     print('-' * 20)
@@ -108,12 +114,14 @@ with conn:
     # uses the IN operator to find the customers who have the sales 
     # representative id in the list.
 
-    curs = conn.execute("""SELECT customerid, firstname, lastname
-                           FROM customers
-                           WHERE supportrepid IN (
+    curs = conn.execute("""SELECT customerid, 
+                                  firstname, 
+                                  lastname
+                             FROM customers
+                            WHERE supportrepid IN (
                                                    SELECT employeeid
-                                                   FROM employees
-                                                   WHERE country = 'Canada' AND lastname LIKE 'P%'
+                                                     FROM employees
+                                                    WHERE country = 'Canada' AND lastname LIKE 'P%'
                                                  );""")
     for i in curs: print(i)
     print('-' * 20)
@@ -145,31 +153,121 @@ conn = lite.connect(db_path)
 
 with conn:
     
+    # AS is optional
     curs = conn.execute("""SELECT sum(bytes) AS size
-                           FROM tracks
-                           GROUP BY albumid""")
+                             FROM tracks
+                            GROUP BY albumid;""")
     
     for i in curs: print(i)
     print("-" * 20)
     
-    # The AS keyword is to give an ALIAS name to your database table or to table column.
-    
+    # The AS keyword is to give an ALIAS name to your database table or
+    # to table column.
     curs = conn.execute("""SELECT avg(album.size)
-                           FROM (
-                                   SELECT sum(bytes) AS size
-                                   FROM tracks
-                                   GROUP BY albumid
-                                 )
-                                 AS album;""")
+                             FROM (
+                                    SELECT sum(bytes) AS size
+                                      FROM tracks
+                                     GROUP BY albumid
+                                  )
+                                  AS album;""")
+    
+    # Request with the same result (no alias for the inner query)
+    # curs = conn.execute("""SELECT avg(size)
+    #                          FROM (
+    #                                 SELECT sum(bytes) AS size
+    #                                   FROM tracks
+    #                                  GROUP BY albumid
+    #                               );""")
     
     for i in curs: print(i)
     
     # OUTPUT:
-    # (117386255350.0,)
+    # (338288920.3170029,)
 
 
-print("-" * 20 + "# 3 SQLite correlated subquery" + "-" * 20)
+print("-" * 20 + "# 3 SQLite correlated subquery in the WHERE clause" + "-" * 20)
 
+# All the subqueries you have seen so far can be executed independently. 
+# In other words, it does not depend on the outer query.
+
+# The correlated subquery is a subquery that uses the values from the outer
+# query. Unlike the ordinal subquery, the correlated subquery cannot be
+# executed independently.
+
+# The correlated subquery is not efficient because it is evaluated for each
+# row processed by the outer query.
+
+
+
+db_path = os.path.join('db_chinook', 'chinook.db')
+
+conn = lite.connect(db_path)
+
+with conn:
+
+    # The following query uses a correlated subquery to return the albums whose
+    # size is less than 10MB. Correlation is in the line 
+    # WHERE tracks.AlbumId = albums.AlbumId
+    
+    curs = conn.execute("""SELECT albumid,
+                                  title
+                             FROM albums
+                            WHERE 10000000 > (
+                                               SELECT sum(bytes)
+                                                 FROM tracks
+                                                WHERE tracks.AlbumId = albums.AlbumId
+                                             )
+                            ORDER BY title;""")
+
+    for i in curs: print(i)
+
+    # OUTPUT:
+    # (296, u'A Copland Celebration, Vol. I')
+    # (285, u'A Soprano Inspired')
+    # (307, u'Adams, John: The Chairman Dances')
+    # ...
+
+# How the query works:
+
+# - For each row processed in the outer query, the correlated subquery calculates 
+#   the size of the albums from the tracks that belong the current album using the
+#   SUM function.
+# - The predicate in the WHERE clause filters the albums that have the size greater
+#   than or equal 10MB (10000000 bytes).
+
+print("-" * 20 + "# 4 SQLite correlated subquery in the SELECT clause example" + "-" * 20)
+
+# The following query uses a correlated subquery in the SELECT clause to return
+# the number of tracks in an album.
+
+db_path = os.path.join('db_chinook', 'chinook.db')
+
+conn = lite.connect(db_path)
+
+with conn:
+    
+    # AS is omitted before tracks_count
+    curs = conn.execute("""SELECT albumid,
+                                  title,
+                                  (
+                                    SELECT count(trackid)
+                                      FROM tracks
+                                     WHERE tracks.AlbumId = albums.AlbumId 
+                                  )
+                                  tracks_count
+                             FROM albums
+                            ORDER BY tracks_count DESC;""")
+                            
+    for i in curs: print(i)
+
+    # OUTPUT:
+    # (141, u'Greatest Hits', 57)
+    # (23, u'Minha Historia', 34)
+    # (73, u'Unplugged', 30)
+    # (229, u'Lost, Season 3', 26)
+    # (230, u'Lost, Season 1', 25)
+    # (251, u'The Office, Season 3', 25)
+    # ...
 
 # READ
 # https://www.pluralsight.com/blog/it-ops/linux-file-permissions
