@@ -6,6 +6,9 @@
 #
 # 1) Old-school way to have an abstract class
 #    https://stackoverflow.com/questions/13646245/is-it-possible-to-make-abstract-classes-in-python
+#
+# 2) How to invoke methods of a super class
+#    https://stackoverflow.com/questions/31232098/how-to-call-super-method/31232226
 
 
 # GENERAL INFORMATION:
@@ -58,7 +61,7 @@ def main():
         
     while True:
         print('1. read list |==| 2. add user |==| 3. quit')
-        key = input('Choose option: ')
+        key = raw_input('Choose option: ')
         if key == 1:
             info.read()
         elif key == 2:

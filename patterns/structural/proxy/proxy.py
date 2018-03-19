@@ -127,7 +127,7 @@ def main():
         
     while True:
         print('1. read list |==| 2. add user |==| 3. quit')
-        key = input('Choose option: ')
+        key = raw_input('Choose option: ')
         if key == 1:
             info.read()
         elif key == 2:

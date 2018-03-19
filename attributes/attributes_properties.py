@@ -9,6 +9,8 @@
 # 1) Inheritance and __init__
 #    https://stackoverflow.com/questions/5166473/inheritance-and-init-method-in-python
 #
+# 2) Good example of property usage
+#    https://www.programiz.com/python-programming/property
 
 # GENERAL INFORMATION:
 
